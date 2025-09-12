@@ -1,0 +1,15 @@
+corepack
+fixjson
+forever
+@githubnext/github-copilot-cli
+@google/gemini-cli
+joplin
+jsonld-cli
+jsonlint
+jsonrepair
+httpyac
+markdownlint-cli
+neovim
+node-lambda
+npm
+yaml-lint

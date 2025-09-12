@@ -1,0 +1,36 @@
+atuin
+bandwhich --locked
+bat
+bob
+bottom --locked
+du-dust
+dysk --locked
+eza
+fd-find
+ffsend
+fnm
+fselect
+git-delta
+grex
+huniq
+hyperfine --locked
+macchina
+mcat
+ouch
+oxker
+pik
+procs
+repgrep
+ripgrep --features 'pcre2'
+rust-parallel
+sd
+so
+starship --locked
+tealdeer
+tokei
+tuc
+watchexec-cli --locked
+xh --locked
+yazi-fm yazi-cli --locked
+zellij --locked
+zoxide
