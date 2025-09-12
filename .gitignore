@@ -4,3 +4,4 @@
 .config/nvim/neovim_tips/*
 .config/nvim/spell/*
 .config/nvim/prompts/*
+.config/zellij/plugins/*
