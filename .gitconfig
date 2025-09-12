@@ -1,0 +1,50 @@
+[user]
+  name = Toni Hermoso Pulido
+  email = toniher@cau.cat
+
+[submodule]
+  recurse = true
+
+[credential]
+  helper = store
+
+[core]
+  pager = delta
+
+[interactive]
+  diffFilter = delta --color-only
+
+[delta]
+    features = tokyonight
+
+    true-color = always
+    navigate = true
+    light = false
+    keep-plus-minus-markers = true
+    line-numbers = true
+    file-decoration-style = none
+
+[delta "tokyonight"]
+    minus-style                   = syntax "#d490b0"
+    minus-non-emph-style          = syntax "#d490b0"
+    minus-emph-style              = syntax "#713137"
+    minus-empty-line-marker-style = syntax "#d490b0"
+    line-numbers-minus-style      = "#b2555b"
+    plus-style                    = syntax "#658aa3"
+    plus-non-emph-style           = syntax "#658aa3"
+    plus-emph-style               = syntax "#2c5a66"
+    plus-empty-line-marker-style  = syntax "#658aa3"
+    line-numbers-plus-style       = "#266d6a"
+    line-numbers-zero-style       = "#3b4261"
+
+[merge]
+  conflictstyle = diff3
+
+[diff]
+  colorMoved = default
+  ignoreSubmodules = dirty
+
+[init]
+    defaultBranch = main
+[alias]
+	graph = log --all --graph --decorate --oneline
