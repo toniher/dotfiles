@@ -74,7 +74,7 @@ export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
 
 # GO
 export GOPATH=${HOME}/go
-export PATH=/usr/local/go/bin:${PATH}:${GOPATH}/bin
+export PATH=/usr/local/go/bin:${GOPATH}/bin:$PATH
 
 # PHP Composer
 export PATH="$HOME/.config/composer/vendor/bin:$PATH"
