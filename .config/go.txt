@@ -1,0 +1,4 @@
+github.com/jesseduffield/lazydocker@latest
+github.com/jesseduffield/lazygit@latest
+github.com/amir20/dtop@latest
+github.com/junegunn/fzf@latest

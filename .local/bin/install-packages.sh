@@ -22,6 +22,10 @@ cargo)
   PROGRAM="$NICECMD cargo install"
   read_file_lines
   ;;
+go)
+  PROGRAM="$NICECMD go install"
+  read_file_lines
+  ;;
 npm)
   PROGRAM="$NICECMD npm install -g"
   read_file_lines
@@ -30,7 +34,7 @@ uv)
   bash "${HOME}/.config/uv.sh" "$ISNICE"
   ;;
 *)
-  echo "Unknown file type. Choose cargo, npm or uv"
+  echo "Unknown file type. Choose cargo, go, npm or uv"
   exit 1
   ;;
 esac
