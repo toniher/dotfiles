@@ -166,10 +166,9 @@ return {
 		priority = 1001,
 	},
 	{
-		"ahmedkhalf/project.nvim",
+		"DrKJeff16/project.nvim",
 		config = function()
-			require("project_nvim").setup({
-
+			require("project").setup({
 				detection_methods = { "lsp", "pattern" },
 				exclude_dirs = { "~/.config/*" },
 				-- patterns used to detect root dir, when **"pattern"** is in detection_methods
