@@ -1,2 +1,6 @@
 .machine_aliases
 .secrets.sh
+.config/nvim/lazy-lock.json
+.config/nvim/neovim_tips/*
+.config/nvim/spell/*
+.config/nvim/prompts/*
