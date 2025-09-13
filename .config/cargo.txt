@@ -1,7 +1,7 @@
 atuin
 bandwhich --locked
 bat
-bob
+bob-nvim
 bottom --locked
 du-dust
 dysk --locked

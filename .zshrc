@@ -3,7 +3,7 @@ setopt histignorealldups sharehistory globdots
 
 # Quality of life options
 setopt autocd        # Change directory by typing its name
-setopt correct       # Command correction suggestions
+# setopt correct       # Command correction suggestions
 setopt no_beep       # Disable terminal bell
 
 
