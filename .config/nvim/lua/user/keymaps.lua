@@ -45,6 +45,10 @@ keymap("n", "<S-h>", ":bprevious<CR>", opts)
 -- keymap("n", "<S-q>", "<cmd>Bdelete!<CR>", opts)
 keymap("n", "<S-q>", "<cmd>lua require('snacks').bufdelete()<CR>", { silent = true, desc = "Delete Buffer" })
 
+-- buffer Move
+keymap("n", "<leader>mh", ":BufferLineMovePrev<CR>", opts)
+keymap("n", "<leader>ml", ":BufferLineMoveNext<CR>", opts)
+
 -- Tabs
 keymap("n", "<leader>bl", ":+tabnext<CR>", opts)
 keymap("n", "<leader>bh", ":-tabnext<CR>", opts)

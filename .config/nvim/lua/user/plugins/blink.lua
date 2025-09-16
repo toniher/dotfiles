@@ -134,7 +134,7 @@ return {
 						opts = {
 							-- the minimum length of the current word to start searching
 							-- (if the word is shorter than this, the search will not start)
-							prefix_min_len = 3,
+							prefix_min_len = 5,
 
 							-- Specifies how to find the root of the project where the ripgrep
 							-- search will start from. Accepts the same options as the marker

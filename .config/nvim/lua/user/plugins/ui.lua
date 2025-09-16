@@ -164,34 +164,6 @@ return {
 			},
 		},
 	},
-	-- {
-	-- 	"nvim-tree/nvim-tree.lua",
-	-- 	tag = "v1.13.0",
-	-- 	dependencies = {
-	-- 		"nvim-tree/nvim-web-devicons",
-	-- 	},
-	-- 	event = "VeryLazy",
-	-- 	config = function()
-	-- 		require("nvim-tree").setup({
-	-- 			respect_buf_cwd = true,
-	-- 			update_focused_file = {
-	-- 				enable = true,
-	-- 				update_root = true,
-	-- 			},
-	-- 			sync_root_with_cwd = true,
-	-- 			sort_by = "case_sensitive",
-	-- 			view = {
-	-- 				width = 40,
-	-- 			},
-	-- 			renderer = {
-	-- 				group_empty = true,
-	-- 			},
-	-- 			filters = {
-	-- 				dotfiles = false,
-	-- 			},
-	-- 		})
-	-- 	end,
-	-- },
 	{
 		"akinsho/bufferline.nvim",
 		event = "VeryLazy",
