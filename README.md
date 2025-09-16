@@ -6,10 +6,11 @@ The contents of this repo may not be always up to date with my present-day confi
 
 # Software
 
-* [Neovim](https://neovim.io/)
-* [Alacritty](https://alacritty.org)
-* [Zellij](https://zellij.dev/)
-* ...
+- [Alacritty](https://alacritty.org)
+- [Neovim](https://neovim.io/)
+- [Wezterm](https://wezterm.org/)
+- [Zellij](https://zellij.dev/)
+- ...
 
 # Scripts
 
