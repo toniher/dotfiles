@@ -428,7 +428,7 @@ return {
 							icon = " ",
 							key = "s",
 							desc = "Sessions",
-							action = ":SessionSearch",
+							action = ":AutoSession search",
 						},
 						{
 							icon = " ",
