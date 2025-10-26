@@ -171,6 +171,9 @@ return {
 			require("project").setup({
 				detection_methods = { "lsp", "pattern" },
 				exclude_dirs = { "~/.config/*" },
+				fzf_lua = {
+					enabled = true,
+				},
 				-- patterns used to detect root dir, when **"pattern"** is in detection_methods
 				patterns = { ".git", "Makefile", "package.json" },
 			})
@@ -181,10 +184,10 @@ return {
 	-- LSP plugins
 	{
 		"neovim/nvim-lspconfig",
-		tag = "v2.4.0",
+		tag = "v2.5.0",
 		event = { "BufReadPre", "BufNewFile" },
 	},
-	{ "williamboman/mason.nvim", tag = "v2.0.1" },
+	{ "williamboman/mason.nvim", tag = "v2.1.0" },
 	{ "williamboman/mason-lspconfig.nvim", tag = "v2.1.0" },
 	{ "hinell/lsp-timeout.nvim" },
 	"WhoIsSethDaniel/mason-tool-installer.nvim",
@@ -203,7 +206,7 @@ return {
 		dependencies = {
 			{ "rcarriga/nvim-dap-ui", tag = "v4.0.0" },
 			{ "nvim-neotest/nvim-nio", tag = "v1.10.1" },
-			{ "jay-babu/mason-nvim-dap.nvim", tag = "v2.5.1" },
+			{ "jay-babu/mason-nvim-dap.nvim", tag = "v2.5.2" },
 		},
 	},
 	-- More stuff

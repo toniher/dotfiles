@@ -10,9 +10,15 @@ vim.g.skip_ts_context_commentstring_module = true
 -- python
 vim.g.python3_host_prog = "$HOME/.pyenv/versions/neovim/bin/python"
 
+-- project nvim # TODO: to remove
+vim.g.project_lsp_nowarn = 1
+
 vim.o.sessionoptions = "blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions"
 vim.o.timeout = true
 vim.o.timeoutlen = 300
+
+-- Windows border style
+vim.o.winborder = "rounded"
 
 vim.opt.backup = false -- creates a backup file
 vim.opt.clipboard = "unnamedplus" -- allows neovim to access the system clipboard
