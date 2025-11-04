@@ -122,6 +122,31 @@ keymap("n", "<leader>dt", "<cmd>lua require'dap'.terminate()<cr>", opts)
 keymap("n", "<leader>gb", "<cmd>G blame<CR>", opts)
 keymap("n", "<leader>gB", "<cmd>lua require('snacks').gitbrowse()<CR>", opts)
 keymap("n", "<leader>gd", "<cmd>G diff<CR>", opts)
+keymap(
+	"n",
+	"<leader>ghi",
+	"<cmd>lua require('snacks').picker.gh_issue()<CR>",
+	{ desc = "GitHub Issues (open)", noremap = true }
+)
+keymap(
+	"n",
+	"<leader>ghI",
+	"<cmd>lua require('snacks').picker.gh_issue({ state = 'all' })<CR>",
+	{ desc = "GitHub Issues (all)", noremap = true }
+)
+keymap(
+	"n",
+	"<leader>ghp",
+	"<cmd>lua require('snacks').picker.gh_pr()<CR>",
+	{ desc = "GitHub Pull Requests (open)", noremap = true }
+)
+keymap(
+	"n",
+	"<leader>ghP",
+	"<cmd>lua require('snacks').picker.gh_pr({ state = 'all' })<CR>",
+	{ desc = "GitHub Pull Requests (all)", noremap = true }
+)
+
 keymap("n", "<leader>gi", "<cmd>G<CR>", opts)
 keymap("n", "<leader>gf", "<cmd>lua require('snacks').lazygit.log_file()<CR>", opts)
 keymap("n", "<leader>gg", "<cmd>lua require('snacks').lazygit()<CR>", opts)

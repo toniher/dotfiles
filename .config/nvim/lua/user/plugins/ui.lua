@@ -278,6 +278,14 @@ return {
 		end,
 	},
 	{
+		"wizardling1/zj-tab.nvim",
+		opts = {
+			-- Example options:
+			enable_devicons = true,
+			max_tabname_width = 30,
+		},
+	},
+	{
 		"nvim-lualine/lualine.nvim",
 		config = function()
 			require("lualine").setup({

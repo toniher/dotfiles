@@ -467,6 +467,7 @@ return {
 				},
 			},
 			dim = { enabled = true },
+			gh = { enabled = true },
 			git = { enabled = true },
 			gitbrowse = { enabled = true },
 			input = { enabled = true },
