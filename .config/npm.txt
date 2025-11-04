@@ -9,6 +9,8 @@ jsonlint
 jsonrepair
 httpyac
 markdownlint-cli
+mcp-hub
+@nanocollective/nanocoder
 neovim
 node-lambda
 npm

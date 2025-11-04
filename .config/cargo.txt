@@ -3,6 +3,7 @@ bandwhich --locked
 bat
 bob-nvim
 bottom --locked
+dtop
 du-dust
 dysk --locked
 eza
@@ -23,6 +24,7 @@ procs
 repgrep
 ripgrep --features 'pcre2'
 rust-parallel
+rustnet-monitor
 sd
 so
 starship --locked
