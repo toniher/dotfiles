@@ -18,7 +18,7 @@ return {
 	},
 	{
 		"nvim-java/nvim-java",
-		version = "3.0.0", -- optionally pin to a tag
+		version = "4.0.4", -- optionally pin to a tag
 		dependencies = {
 			"williamboman/mason.nvim", -- replace with your required plugin
 		},
@@ -113,7 +113,7 @@ return {
 	},
 	{
 		"kylechui/nvim-surround",
-		version = "^3.0.2", -- Use for stability; omit to use `main` branch for the latest features
+		version = "^3.1.7", -- Use for stability; omit to use `main` branch for the latest features
 		event = "VeryLazy",
 		config = function()
 			require("nvim-surround").setup({
@@ -137,7 +137,7 @@ return {
 	},
 	{
 		"allaman/emoji.nvim",
-		version = "5.0.0", -- optionally pin to a tag
+		version = "5.0.1", -- optionally pin to a tag
 		ft = "markdown", -- adjust to your needs
 		dependencies = {
 			-- optional for nvim-cmp integration
@@ -149,6 +149,27 @@ return {
 		opts = {
 			-- default is false
 			enable_cmp_integration = true,
+		},
+	},
+	{
+		"uhs-robert/sshfs.nvim",
+		opts = {
+			-- Refer to the configuration section below
+			-- or leave empty for defaults
+			--
+			keymaps = {
+				mount = "<leader>sm", -- creates an ssh connection and mounts via sshfs
+				unmount = "<leader>su", -- disconnects an ssh connection and unmounts via sshfs
+				unmount_all = "<leader>sU", -- disconnects all ssh connections and unmounts via sshfs
+				explore = "<leader>se", -- explore an sshfs mount using your native editor
+				change_dir = "<leader>sd", -- change dir to mount
+				command = "<leader>sn", -- run command on mount
+				config = "<leader>sc", -- edit ssh config
+				reload = "<leader>sr", -- manually reload ssh config
+				files = "<leader>sf", -- browse files using chosen picker
+				grep = "<leader>sg", -- grep files using chosen picker
+				terminal = "<leader>st", -- open ssh terminal session
+			},
 		},
 	},
 }

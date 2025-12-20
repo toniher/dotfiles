@@ -90,9 +90,13 @@ require("mason-lspconfig").setup({
 
 require("java").setup({
 	-- load java test plugins
-	jdtls = {
-		version = "v1.43.0",
-	},
+	-- lombok = {
+	-- 	enable = false,
+	-- 	version = "1.18.40",
+	-- },
+	-- jdtls = {
+	-- 	version = "v1.43.0",
+	-- },
 	-- java_test = {
 	-- 	enable = true,
 	-- 	version = "0.43.1",

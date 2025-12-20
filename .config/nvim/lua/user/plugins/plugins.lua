@@ -169,7 +169,6 @@ return {
 		"DrKJeff16/project.nvim",
 		config = function()
 			require("project").setup({
-				detection_methods = { "lsp", "pattern" },
 				exclude_dirs = { "~/.config/*" },
 				fzf_lua = {
 					enabled = true,

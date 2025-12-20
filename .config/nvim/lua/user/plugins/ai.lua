@@ -85,10 +85,11 @@ return {
 	},
 	{
 		"olimorris/codecompanion.nvim",
+		version = "v17.33.0", -- optionally pin to a tag
 		dependencies = {
 			"nvim-lua/plenary.nvim",
 			"nvim-treesitter/nvim-treesitter",
-			"ravitemer/codecompanion-history.nvim",
+			{ "ravitemer/codecompanion-history.nvim", commit = "eb99d256352144cf3b6a1c45608ec25544a0813d" },
 		},
 		config = function()
 			require("codecompanion").setup({
@@ -219,6 +220,7 @@ return {
 	},
 	{
 		"ravitemer/mcphub.nvim",
+		commit = "8ff40b5edc649959bb7e89d25ae18e055554859a",
 		dependencies = {
 			"nvim-lua/plenary.nvim",
 		},
