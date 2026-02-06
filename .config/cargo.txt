@@ -3,15 +3,16 @@ bandwhich --locked
 bat
 bob-nvim
 bottom --locked
+cargo-binstall
+dtop
 du-dust
 dysk --locked
 eza
 fd-find
 ffsend
 fnm
-fselect
+ripgrep
 git-delta
-grex
 huniq
 hyperfine --locked
 macchina
@@ -20,17 +21,17 @@ ouch
 oxker
 pik
 procs
-repgrep
-ripgrep --features 'pcre2'
+ripgrep --features pcre2
 rust-parallel
+rustnet-monitor
 sd
-so
 starship --locked
 tealdeer
 tokei
 tuc
+viu
 watchexec-cli --locked
 xh --locked
-yazi-fm yazi-cli --locked
+yazi-build --force
 zellij --locked
 zoxide

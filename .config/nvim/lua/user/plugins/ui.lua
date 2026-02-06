@@ -165,6 +165,15 @@ return {
 		},
 	},
 	{
+		"rachartier/tiny-inline-diagnostic.nvim",
+		event = "VeryLazy",
+		priority = 1000,
+		config = function()
+			require("tiny-inline-diagnostic").setup()
+			vim.diagnostic.config({ virtual_text = false }) -- Disable Neovim's default virtual text diagnostics
+		end,
+	},
+	{
 		"akinsho/bufferline.nvim",
 		event = "VeryLazy",
 		config = function()
@@ -267,6 +276,14 @@ return {
 				},
 			})
 		end,
+	},
+	{
+		"wizardling1/zj-tab.nvim",
+		opts = {
+			-- Example options:
+			enable_devicons = true,
+			max_tabname_width = 30,
+		},
 	},
 	{
 		"nvim-lualine/lualine.nvim",

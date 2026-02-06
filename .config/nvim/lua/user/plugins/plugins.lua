@@ -169,10 +169,10 @@ return {
 		"DrKJeff16/project.nvim",
 		config = function()
 			require("project").setup({
-				detection_methods = { "lsp", "pattern" },
 				exclude_dirs = { "~/.config/*" },
-				-- patterns used to detect root dir, when **"pattern"** is in detection_methods
-				patterns = { ".git", "Makefile", "package.json" },
+				fzf_lua = {
+					enabled = true,
+				},
 			})
 		end,
 	},
@@ -181,10 +181,10 @@ return {
 	-- LSP plugins
 	{
 		"neovim/nvim-lspconfig",
-		tag = "v2.4.0",
+		tag = "v2.5.0",
 		event = { "BufReadPre", "BufNewFile" },
 	},
-	{ "williamboman/mason.nvim", tag = "v2.0.1" },
+	{ "williamboman/mason.nvim", tag = "v2.2.1" },
 	{ "williamboman/mason-lspconfig.nvim", tag = "v2.1.0" },
 	{ "hinell/lsp-timeout.nvim" },
 	"WhoIsSethDaniel/mason-tool-installer.nvim",
@@ -203,7 +203,7 @@ return {
 		dependencies = {
 			{ "rcarriga/nvim-dap-ui", tag = "v4.0.0" },
 			{ "nvim-neotest/nvim-nio", tag = "v1.10.1" },
-			{ "jay-babu/mason-nvim-dap.nvim", tag = "v2.5.1" },
+			{ "jay-babu/mason-nvim-dap.nvim", tag = "v2.5.2" },
 		},
 	},
 	-- More stuff
@@ -428,7 +428,7 @@ return {
 							icon = " ",
 							key = "s",
 							desc = "Sessions",
-							action = ":SessionSearch",
+							action = ":AutoSession search",
 						},
 						{
 							icon = " ",
@@ -464,6 +464,7 @@ return {
 				},
 			},
 			dim = { enabled = true },
+			gh = { enabled = true },
 			git = { enabled = true },
 			gitbrowse = { enabled = true },
 			input = { enabled = true },
@@ -513,6 +514,17 @@ return {
 		end,
 	},
 	{
+		"2kabhishek/seeker.nvim",
+		dependencies = { "folke/snacks.nvim" },
+		cmd = { "Seeker" },
+		keys = {
+			{ "<leader>fa", ":Seeker files<CR>", desc = "Seek Files" },
+			{ "<leader>fe", ":Seeker grep<CR>", desc = "Seek Grep" },
+			{ "<leader>fi", ":Seeker git_files<CR>", desc = "Seek Git files" },
+		},
+		opts = {}, -- Required unless you call seeker.setup() manually, add your configs here
+	},
+	{
 		"ibhagwan/fzf-lua",
 		-- optional for icon support
 		dependencies = { "nvim-tree/nvim-web-devicons" },
@@ -520,4 +532,16 @@ return {
 		-- dependencies = { "echasnovski/mini.icons" },
 		opts = {},
 	},
+	-- {
+	-- 	"jalvesaq/zotcite",
+	-- 	dependencies = {
+	-- 		"nvim-treesitter/nvim-treesitter",
+	-- 		"nvim-telescope/telescope.nvim",
+	-- 	},
+	-- 	config = function()
+	-- 		require("zotcite").setup({
+	-- 			-- your options here (see doc/zotcite.txt)
+	-- 		})
+	-- 	end,
+	-- },
 }

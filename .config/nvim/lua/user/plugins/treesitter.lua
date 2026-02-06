@@ -92,6 +92,7 @@ return {
 			})
 		end,
 	},
+	-- { "nvim-treesitter/nvim-treesitter-textobjects", event = { "BufReadPost", "BufNewFile" } },
 	{ "JoosepAlviste/nvim-ts-context-commentstring", event = { "BufReadPost", "BufNewFile" } },
 	{ "https://gitlab.com/HiPhish/rainbow-delimiters.nvim", event = { "BufReadPost", "BufNewFile" } },
 }

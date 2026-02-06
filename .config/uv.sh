@@ -13,7 +13,9 @@ uv_tools=(
   "git+https://github.com/54yyyu/zotero-mcp.git"
   "git+https://github.com/doobidoo/mcp-memory-service.git"
   "git+https://github.com/rudra-ravi/wikipedia-mcp.git"
+  glances
   "huggingface_hub[cli]"
+
   llm
   nf-core
   pip
@@ -37,7 +39,7 @@ if command -v llm &>/dev/null; then
     llm-fragments-site-text
     llm-gemini
     llm-ollama
-    llm-tools-rag
+    # llm-tools-rag
   )
 
   echo "Installing/upgrading llm plugins..."

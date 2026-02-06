@@ -3,7 +3,6 @@ local wezterm = require("wezterm")
 
 -- This table will hold the configuration.
 local config = {}
-
 -- In newer versions of wezterm, use the config_builder which will
 -- help provide clearer error messages
 if wezterm.config_builder then
@@ -16,13 +15,18 @@ wezterm.on("gui-startup", function(cmd)
 end)
 
 config.enable_wayland = false
-
+local home = os.getenv("HOME")
+local zellij_path = home .. "/.cargo/bin/zellij"
+config.default_prog = { "/bin/zsh", "-l" }
+config.set_environment_variables = {
+	SHELL = "/bin/zsh",
+}
 -- This is where you actually apply your config choices
 
 -- config.font = wezterm.font("JetBrainsMono Nerd Font")
 -- config.font = wezterm.font("CaskaydiaCove Nerd Font Mono")
 config.font = wezterm.font("NotoMono Nerd Font")
-config.window_background_opacity = 0.95
+config.window_background_opacity = 0.96
 -- For example, changing the color scheme:
 config.font_size = 13
 config.color_scheme = "Tokyo Night"

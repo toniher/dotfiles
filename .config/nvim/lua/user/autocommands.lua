@@ -52,14 +52,15 @@ vim.api.nvim_create_autocmd({ "BufWritePost" }, {
 	end,
 })
 
-vim.api.nvim_create_autocmd({ "BufWritePost" }, {
-	callback = function()
-		require("lint").try_lint()
-		if vim.fn.filereadable(".vale.ini") > 0 then
-			require("lint").try_lint({ "vale" })
-		end
-	end,
-})
+-- Disabled linting on saving --
+-- vim.api.nvim_create_autocmd({ "BufWritePost" }, {
+-- 	callback = function()
+-- 		require("lint").try_lint()
+-- 		if vim.fn.filereadable(".vale.ini") > 0 then
+-- 			require("lint").try_lint({ "vale" })
+-- 		end
+-- 	end,
+-- })
 
 vim.api.nvim_create_autocmd({ "VimEnter" }, {
 	callback = function()

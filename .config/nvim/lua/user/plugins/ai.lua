@@ -2,6 +2,18 @@ local github_mcp_token = vim.fn.getenv("GITHUB_MCP_TOKEN")
 if not github_mcp_token == "" then
 	github_mcp_token = "" -- or leave as nil, or handle as needed
 end
+local gemini_api_key = vim.fn.getenv("GEMINI_API_KEY")
+if not gemini_api_key == "" then
+	gemini_api_key = "" -- or leave as nil, or handle as needed
+end
+local ollama_api_key = vim.fn.getenv("OLLAMA_API_KEY")
+if not ollama_api_key == "" then
+	ollama_api_key = "" -- or leave as nil, or handle as needed
+end
+local joplin_token = vim.fn.getenv("JOPLIN_TOKEN")
+if not joplin_token == "" then
+	joplin_token = "" -- or leave as nil, or handle as needed
+end
 
 local prompts_dirs = { vim.fn.stdpath("config") .. "/prompts/", vim.env.HOME .. "/soft/Fabric/data/patterns" }
 local strategies_dirs = { vim.env.HOME .. "/soft/Fabric/data/strategies" }
@@ -16,9 +28,9 @@ function make_prompt_library(name, system_prompt, user_prompt, is_code)
 	-- TODO: Check this is_code
 	is_code = is_code == nil and true or is_code
 	return {
-		strategy = "chat",
+		interaction = "chat",
 		description = name,
-		opts = vim.tbl_extend("force", { short_name = name }, shared_opts),
+		opts = vim.tbl_extend("force", { alias = name }, shared_opts),
 
 		prompts = {
 			{
@@ -71,8 +83,6 @@ function retrieve_prompts(dirs)
 	return prompt_libraries
 end
 
--- TODO: wrapper for strategies as well
-
 return {
 	{
 		"Davidyz/VectorCode",
@@ -83,12 +93,101 @@ return {
 			require("vectorcode").setup({})
 		end,
 	},
+	-- {
+	-- 	"folke/sidekick.nvim",
+	-- 	opts = {
+	-- 		-- add any options here
+	-- 		cli = {
+	-- 			mux = {
+	-- 				backend = "zellij",
+	-- 				enabled = true,
+	-- 			},
+	-- 		},
+	-- 	},
+	-- 	keys = {
+	-- 		{
+	-- 			"<tab>",
+	-- 			function()
+	-- 				-- if there is a next edit, jump to it, otherwise apply it if any
+	-- 				if not require("sidekick").nes_jump_or_apply() then
+	-- 					return "<Tab>" -- fallback to normal tab
+	-- 				end
+	-- 			end,
+	-- 			expr = true,
+	-- 			desc = "Goto/Apply Next Edit Suggestion",
+	-- 		},
+	-- 		{
+	-- 			"<c-.>",
+	-- 			function()
+	-- 				require("sidekick.cli").toggle()
+	-- 			end,
+	-- 			desc = "Sidekick Toggle",
+	-- 			mode = { "n", "t", "i", "x" },
+	-- 		},
+	-- 		{
+	-- 			"<leader>aa",
+	-- 			function()
+	-- 				require("sidekick.cli").toggle()
+	-- 			end,
+	-- 			desc = "Sidekick Toggle CLI",
+	-- 		},
+	-- 		{
+	-- 			"<leader>as",
+	-- 			function()
+	-- 				require("sidekick.cli").select()
+	-- 			end,
+	-- 			-- Or to select only installed tools:
+	-- 			-- require("sidekick.cli").select({ filter = { installed = true } })
+	-- 			desc = "Select CLI",
+	-- 		},
+	-- 		{
+	-- 			"<leader>ad",
+	-- 			function()
+	-- 				require("sidekick.cli").close()
+	-- 			end,
+	-- 			desc = "Detach a CLI Session",
+	-- 		},
+	-- 		{
+	-- 			"<leader>at",
+	-- 			function()
+	-- 				require("sidekick.cli").send({ msg = "{this}" })
+	-- 			end,
+	-- 			mode = { "x", "n" },
+	-- 			desc = "Send This",
+	-- 		},
+	-- 		{
+	-- 			"<leader>af",
+	-- 			function()
+	-- 				require("sidekick.cli").send({ msg = "{file}" })
+	-- 			end,
+	-- 			desc = "Send File",
+	-- 		},
+	-- 		{
+	-- 			"<leader>av",
+	-- 			function()
+	-- 				require("sidekick.cli").send({ msg = "{selection}" })
+	-- 			end,
+	-- 			mode = { "x" },
+	-- 			desc = "Send Visual Selection",
+	-- 		},
+	-- 		{
+	-- 			"<leader>ap",
+	-- 			function()
+	-- 				require("sidekick.cli").prompt()
+	-- 			end,
+	-- 			mode = { "n", "x" },
+	-- 			desc = "Sidekick Select Prompt",
+	-- 		},
+	-- 	},
+	-- },
 	{
 		"olimorris/codecompanion.nvim",
+		version = "v18.5.1", -- optionally pin to a tag
 		dependencies = {
 			"nvim-lua/plenary.nvim",
 			"nvim-treesitter/nvim-treesitter",
-			"ravitemer/codecompanion-history.nvim",
+			{ "ravitemer/codecompanion-history.nvim", commit = "8c6ca9f998aeef89f3543343070f8562bf911fb4" },
+			"cairijun/codecompanion-agentskills.nvim",
 		},
 		config = function()
 			require("codecompanion").setup({
@@ -101,12 +200,29 @@ return {
 									model = {
 										default = "codellama:latest",
 									},
-									-- num_ctx = {
-									-- 	default = 16384,
-									-- },
-									-- num_predict = {
-									-- 	default = -1,
-									-- },
+								},
+							})
+						end,
+						qwen25coder = function()
+							return require("codecompanion.adapters").extend("ollama", {
+								name = "qwen25coder", -- Give this adapter a different name to differentiate it from the default ollama adapter
+								schema = {
+									model = {
+										default = "qwen2.5-coder:latest",
+									},
+								},
+							})
+						end,
+					},
+					acp = {
+						gemini_cli = function()
+							return require("codecompanion.adapters").extend("gemini_cli", {
+								defaults = {
+									auth_method = "oauth-personal", -- "oauth-personal"|"gemini-api-key"|"vertex-ai"
+									timeout = 20000, -- 20 seconds
+								},
+								env = {
+									GEMINI_API_KEY = gemini_api_key,
 								},
 							})
 						end,
@@ -126,11 +242,13 @@ return {
 							expiration_days = 0,
 							-- Picker interface (auto resolved to a valid picker)
 							picker = "snacks", --- ("telescope", "snacks", "fzf-lua", or "default")
+							---Optional filter function to control which chats are shown when browsing
+							chat_filter = nil, -- function(chat_data) return boolean end
 							-- Customize picker keymaps (optional)
 							picker_keymaps = {
-								rename = { n = "<C-R>" },
-								delete = { n = "<C-D>" },
-								duplicate = { n = "<C-Y>" },
+								rename = { n = "r", i = "<M-r>" },
+								delete = { n = "d", i = "<M-d>" },
+								duplicate = { n = "<C-y>", i = "<C-y>" },
 							},
 							---Automatically generate titles for new chats
 							auto_generate_title = true,
@@ -143,6 +261,11 @@ return {
 								refresh_every_n_prompts = 0, -- e.g., 3 to refresh after every 3rd user prompt
 								---Maximum number of times to refresh the title (default: 3)
 								max_refreshes = 3,
+								format_title = function(original_title)
+									-- this can be a custom function that applies some custom
+									-- formatting to the title.
+									return original_title
+								end,
 							},
 							---On exiting and entering neovim, loads the last chat on opening chat
 							continue_last_chat = false,
@@ -152,8 +275,42 @@ return {
 							dir_to_save = vim.fn.stdpath("data") .. "/codecompanion-history",
 							---Enable detailed logging for history extension
 							enable_logging = false,
-							---Optional filter function to control which chats are shown when browsing
-							chat_filter = nil, -- function(chat_data) return boolean end
+
+							-- Summary system
+							summary = {
+								-- Keymap to generate summary for current chat (default: "gcs")
+								create_summary_keymap = "gcs",
+								-- Keymap to browse summaries (default: "gbs")
+								browse_summaries_keymap = "gbs",
+
+								generation_opts = {
+									adapter = nil, -- defaults to current chat adapter
+									model = nil, -- defaults to current chat model
+									context_size = 90000, -- max tokens that the model supports
+									include_references = true, -- include slash command content
+									include_tool_outputs = true, -- include tool execution results
+									system_prompt = nil, -- custom system prompt (string or function)
+									format_summary = nil, -- custom function to format generated summary e.g to remove <think/> tags from summary
+								},
+							},
+
+							-- Memory system (requires VectorCode CLI)
+							memory = {
+								-- Automatically index summaries when they are generated
+								auto_create_memories_on_summary_generation = true,
+								-- Path to the VectorCode executable
+								vectorcode_exe = "vectorcode",
+								-- Tool configuration
+								tool_opts = {
+									-- Default number of memories to retrieve
+									default_num = 10,
+								},
+								-- Enable notifications for indexing progress
+								notify = true,
+								-- Index all existing memories on startup
+								-- (requires VectorCode 0.6.12+ for efficient incremental indexing)
+								index_on_startup = false,
+							},
 						},
 					},
 					mcphub = {
@@ -167,8 +324,15 @@ return {
 					vectorcode = {
 						opts = { add_tool = true, add_slash_command = true, tool_opts = {} },
 					},
+					agentskills = {
+						opts = {
+							paths = {
+								{ "~/.config/skills", recursive = true }, -- Recursive search
+							},
+						},
+					},
 				},
-				strategies = {
+				interactions = {
 					inline = {
 						keymaps = {
 							accept_change = {
@@ -207,18 +371,19 @@ return {
 			require("copilot_cmp").setup()
 		end,
 	},
-	{
-		"Exafunction/windsurf.nvim",
-		event = { "InsertEnter" },
-		opts = {
-			enable_chat = true,
-		},
-		config = function()
-			require("codeium").setup({})
-		end,
-	},
+	-- {
+	-- 	"Exafunction/windsurf.nvim",
+	-- 	event = { "InsertEnter" },
+	-- 	opts = {
+	-- 		enable_chat = true,
+	-- 	},
+	-- 	config = function()
+	-- 		require("codeium").setup({})
+	-- 	end,
+	-- },
 	{
 		"ravitemer/mcphub.nvim",
+		commit = "7cd5db330f41b7bae02b2d6202218a061c3ebc1f",
 		dependencies = {
 			"nvim-lua/plenary.nvim",
 		},
@@ -234,6 +399,9 @@ return {
 						CWD = context.cwd,
 						"DBUS_SESSION_BUS_ADDRESS", -- For session variables
 						GITHUB_MCP_TOKEN = github_mcp_token, -- GitHub MCP token
+						OLLAMA_API_KEY = ollama_api_key, -- Ollama API KEY
+						GEMINI_API_KEY = gemini_api_key, -- Gemini API KEY
+						JOPLIN_TOKEN = joplin_token, -- Joplin Token
 					}
 				end,
 				native_servers = {}, -- add your native servers here

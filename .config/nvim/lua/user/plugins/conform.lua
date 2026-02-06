@@ -15,10 +15,12 @@ return {
 			},
 		},
 		opts = {
-			format_on_save = {
-				-- These options will be passed to conform.format()
-				timeout_ms = 500,
-			},
+			-- format_on_save = {
+			-- 	-- These options will be passed to conform.format()
+			-- 	timeout_ms = 500,
+			-- },
+			-- Disable format on save, since it can be disruptive
+			format_on_save = nil,
 			-- Set default options
 			default_format_opts = {
 				lsp_format = "fallback",

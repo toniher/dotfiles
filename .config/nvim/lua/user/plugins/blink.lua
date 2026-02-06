@@ -12,15 +12,16 @@ return {
 		"saghen/blink.cmp",
 		lazy = false, -- lazy loading handled internally
 		version = "*",
+		timeout = 600,
 		dependencies = {
 			{
 				"saghen/blink.compat",
 				opts = { impersonate_nvim_cmp = true, enable_events = true },
 			},
-			"mikavilpas/blink-ripgrep.nvim",
+			{ "mikavilpas/blink-ripgrep.nvim", version = "v2.2.2" },
 			"giuxtaposition/blink-cmp-copilot",
 			"Kaiser-Yang/blink-cmp-git",
-			"onsails/lspkind.nvim",
+			{ "onsails/lspkind.nvim", commit = "dbac5149fb5fb1b642266ff268b1e0f4ebac9293" },
 		},
 
 		-- use a release tag to download pre-built binaries
@@ -68,7 +69,7 @@ return {
 					"buffer",
 					"emoji",
 					-- "codecompanion",
-					"codeium",
+					-- "codeium",
 					"copilot",
 				},
 				providers = {
@@ -96,14 +97,14 @@ return {
 						name = "CodeCompanion",
 						module = "codecompanion.providers.completion.blink",
 					},
-					codeium = {
-						name = "codeium",
-						module = "blink.compat.source",
-						score_offset = 3,
-						transform_items = function(_, items)
-							return assign_icon(items, "󰙨")
-						end,
-					},
+					-- codeium = {
+					-- 	name = "codeium",
+					-- 	module = "blink.compat.source",
+					-- 	score_offset = 3,
+					-- 	transform_items = function(_, items)
+					-- 		return assign_icon(items, "󰙨")
+					-- 	end,
+					-- },
 					emoji = {
 						name = "emoji",
 						module = "blink.compat.source",
@@ -278,7 +279,6 @@ return {
 
 									return icon .. ctx.icon_gap
 								end,
-
 								-- Optionally, use the highlight groups from nvim-web-devicons
 								-- You can also add the same function for `kind.highlight` if you want to
 								-- keep the highlight groups in sync with the icons.

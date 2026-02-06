@@ -1,5 +1,6 @@
 local servers = {
 	"bashls",
+	-- "copilot",
 	"cssls",
 	"html",
 	"jsonls",
@@ -7,6 +8,7 @@ local servers = {
 	"yamlls",
 	"docker_compose_language_service",
 	"dockerls",
+	"harper_ls",
 	"lua_ls",
 	"ltex",
 	"nextflow_ls",
@@ -29,6 +31,7 @@ local ensure_installed = {
 	"editorconfig-checker",
 	"eslint_d",
 	"google-java-format",
+	"harper-ls",
 	"html-lsp",
 	"json-lsp",
 	"lua-language-server",
@@ -90,9 +93,13 @@ require("mason-lspconfig").setup({
 
 require("java").setup({
 	-- load java test plugins
-	jdtls = {
-		version = "v1.43.0",
-	},
+	-- lombok = {
+	-- 	enable = false,
+	-- 	version = "1.18.40",
+	-- },
+	-- jdtls = {
+	-- 	version = "v1.43.0",
+	-- },
 	-- java_test = {
 	-- 	enable = true,
 	-- 	version = "0.43.1",

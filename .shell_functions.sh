@@ -54,9 +54,9 @@ my_ls() {
 
   # Execute eza with the appropriate options
   if $sort_by_modified; then
-    eza --git --icons --sort modified "$@"
+    eza -g --git --icons --sort modified "$@"
   else
-    eza --git --icons "$@"
+    eza -g --git --icons "$@"
   fi
 }
 y() {

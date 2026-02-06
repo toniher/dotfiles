@@ -1,4 +1,3 @@
-corepack
 fixjson
 forever
 @githubnext/github-copilot-cli
@@ -9,6 +8,8 @@ jsonlint
 jsonrepair
 httpyac
 markdownlint-cli
+mcp-hub
+@nanocollective/nanocoder
 neovim
 node-lambda
 npm
