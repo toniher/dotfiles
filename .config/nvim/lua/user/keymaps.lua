@@ -1,8 +1,8 @@
 -- Shorten function name
 local keymap = vim.keymap.set
 -- Silent keymap option
-local opts = { silent = true }
-local opts_move = { noremap = true, silent = true }
+-- We keep everywhere noremap
+local opts = { noremap = true, silent = true }
 
 --Remap space as leader key
 keymap("", "<Space>", "<Nop>", opts)
@@ -90,15 +90,15 @@ keymap("n", "<leader>fl", "<cmd>lua require('snacks').picker.lsp_references()<CR
 keymap("n", "<leader>fm", "<cmd>lua require('snacks').picker.marks()<CR>", { silent = true, desc = "Find marks" })
 keymap("n", "<leader>fp", "<cmd>lua require('snacks').picker.projects()<CR>", opts)
 keymap("n", "<leader>fr", "<cmd>lua require('snacks').picker.recent()<CR>", opts)
-keymap("n", "<leader>fs", ":AutoSession search<CR>", { noremap = true, desc = "Find session" })
+keymap("n", "<leader>fs", "<cmd>AutoSession search<CR>", { noremap = true, desc = "Find session" })
 keymap("n", "<leader>ft", "<cmd>lua require('snacks').picker.todo_comments()<CR>", opts)
 keymap("n", "<leader>fz", "<cmd>lua require('snacks').picker.zoxide()<CR>", opts)
 
 -- Session specific
-keymap("n", "<leader>wd", "<cmd>SessionDelete<CR>", { noremap = true, desc = "Session delete" })
-keymap("n", "<leader>wr", "<cmd>SessionSearch<CR>", { noremap = true, desc = "Session search" })
-keymap("n", "<leader>ws", "<cmd>SessionSave<CR>", { noremap = true, desc = "Save session" })
-keymap("n", "<leader>wa", "<cmd>SessionToggleAutoSave<CR>", { noremap = true, desc = "Toggle autosave" })
+keymap("n", "<leader>wd", "<cmd>AutoSession delete<CR>", { noremap = true, desc = "Autosession delete" })
+keymap("n", "<leader>wr", "<cmd>Autosession search<CR>", { noremap = true, desc = "Autosession search" })
+keymap("n", "<leader>ws", "<cmd>AutoSession save<CR>", { noremap = true, desc = "Autosession save" })
+keymap("n", "<leader>wa", "<cmd>AutoSession toggle<CR>", { noremap = true, desc = "Autosession - Toggle autosave" })
 
 -- Reload buffer
 keymap("n", "<leader>r", ":bufdo :e<CR>", opts)
@@ -181,20 +181,26 @@ keymap("v", "<leader>cc", "<cmd>CodeCompanionChat<CR>", opts)
 keymap("n", "<leader>ch", "<cmd>CodeCompanionHistory<CR>", opts)
 keymap("n", "<leader>ct", "<cmd>CodeCompanionChat Toggle<CR>", opts)
 
+-- CodeDiff
+keymap("n", "<leader>cd", "<cmd>CodeDiff<CR>", opts)
+
+-- Code annotation
+keymap("n", "<leader>k", "<cmd>lua require('codedocs').insert_docs()<CR>", 	{ silent = true, desc = "Add code annotation" })
+
 -- MCPHub
 keymap("n", "<leader>mc", "<cmd>MCPHub<CR>", opts)
 
 -- TroubleToggle
-keymap("n", "<leader>xd", "<cmd>Trouble diagnostics toggle filter.buf=0<cr>", opts_move)
-keymap("n", "<leader>xl", "<cmd>Trouble loclist toggle<cr>", opts_move)
-keymap("n", "<leader>xq", "<cmd>Trouble qflist toggle<cr>", opts_move)
-keymap("n", "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>", opts_move)
+keymap("n", "<leader>xd", "<cmd>Trouble diagnostics toggle filter.buf=0<cr>", opts)
+keymap("n", "<leader>xl", "<cmd>Trouble loclist toggle<cr>", opts)
+keymap("n", "<leader>xq", "<cmd>Trouble qflist toggle<cr>", opts)
+keymap("n", "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>", opts)
 
 -- Normal-mode commands
-keymap("n", "<A-K>", ":MoveLine(1)<CR>", opts_move)
-keymap("n", "<A-J>", ":MoveLine(-1)<CR>", opts_move)
-keymap("n", "<A-H>", ":MoveWord(-1)<CR>", opts_move)
-keymap("n", "<A-L>", ":MoveWord(1)<CR>", opts_move)
+keymap("n", "<A-K>", ":MoveLine(1)<CR>", opts)
+keymap("n", "<A-J>", ":MoveLine(-1)<CR>", opts)
+keymap("n", "<A-H>", ":MoveWord(-1)<CR>", opts)
+keymap("n", "<A-L>", ":MoveWord(1)<CR>", opts)
 
 -- Visual-mode commands
 keymap("v", "<A-K>", ":MoveBlock(1)<CR>", opts)
@@ -203,8 +209,8 @@ keymap("v", "<A-H>", ":MoveHBlock(-1)<CR>", opts)
 keymap("v", "<A-L>", ":MoveHBlock(1)<CR>", opts)
 
 -- Paths
-keymap("n", "<leader>cw", "<cmd>lua print(vim.loop.cwd())<cr>", opts_move)
-keymap("n", "<leader>pw", "<cmd>echo expand('%:p')<cr>", opts_move)
+keymap("n", "<leader>cw", "<cmd>lua print(vim.loop.cwd())<cr>", opts)
+keymap("n", "<leader>pw", "<cmd>echo expand('%:p')<cr>", opts)
 
 --- Suda
 -- keymap("n", "<leader>sr", "<cmd>SudaRead<cr>", opts)
@@ -230,6 +236,21 @@ keymap("n", "<leader>z", "<cmd>lua require('snacks').zen()<CR>", { silent = true
 keymap("n", "<leader>Z", "<cmd>lua require('snacks').zen.zoom()<CR>", { silent = true, desc = "Toggle Zoom" })
 
 -- LSP
-keymap("n", "<leader>l0", "<cmd>LspStop<cr>", opts_move)
-keymap("n", "<leader>l1", "<cmd>LspStart<cr>", opts_move)
-keymap("n", "<leader>li", "<cmd>LspInfo<cr>", opts_move)
+keymap("n", "<leader>l0", "<cmd>LspStop<cr>", opts)
+keymap("n", "<leader>l1", "<cmd>LspStart<cr>", opts)
+keymap("n", "<leader>li", "<cmd>LspInfo<cr>", opts)
+
+keymap("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", opts)
+keymap("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", opts)
+keymap("n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", opts)
+keymap("n", "gI", "<cmd>lua vim.lsp.buf.implementation()<CR>", opts)
+keymap("n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>", opts)
+keymap("n", "gl", "<cmd>lua vim.diagnostic.open_float()<CR>", opts)
+keymap("n", "<leader>la", "<cmd>lua vim.lsp.buf.code_action()<cr>", opts)
+keymap("n", "<leader>lj", "<cmd>lua vim.diagnostic.goto_next({buffer=0})<cr>", opts)
+keymap("n", "<leader>lk", "<cmd>lua vim.diagnostic.goto_prev({buffer=0})<cr>", opts)
+keymap("n", "<leader>lr", "<cmd>lua vim.lsp.buf.rename()<cr>", opts)
+keymap("n", "<leader>ls", "<cmd>lua vim.lsp.buf.signature_help()<CR>", opts)
+keymap("n", "<leader>fl", "<cmd>FzfLua lsp_document_diagnostics<CR>", opts)
+keymap("n", "<leader>lf", "<cmd>lua vim.lsp.buf.format{ async document_diagnostics= true }<CR>", opts)
+

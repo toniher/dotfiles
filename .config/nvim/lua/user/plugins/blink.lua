@@ -19,7 +19,8 @@ return {
 				opts = { impersonate_nvim_cmp = true, enable_events = true },
 			},
 			{ "mikavilpas/blink-ripgrep.nvim", version = "v2.2.2" },
-			"giuxtaposition/blink-cmp-copilot",
+			-- "giuxtaposition/blink-cmp-copilot",
+      "fang2hou/blink-copilot",
 			"Kaiser-Yang/blink-cmp-git",
 			{ "onsails/lspkind.nvim", commit = "dbac5149fb5fb1b642266ff268b1e0f4ebac9293" },
 		},
@@ -69,7 +70,6 @@ return {
 					"buffer",
 					"emoji",
 					-- "codecompanion",
-					-- "codeium",
 					"copilot",
 				},
 				providers = {
@@ -97,14 +97,6 @@ return {
 						name = "CodeCompanion",
 						module = "codecompanion.providers.completion.blink",
 					},
-					-- codeium = {
-					-- 	name = "codeium",
-					-- 	module = "blink.compat.source",
-					-- 	score_offset = 3,
-					-- 	transform_items = function(_, items)
-					-- 		return assign_icon(items, "󰙨")
-					-- 	end,
-					-- },
 					emoji = {
 						name = "emoji",
 						module = "blink.compat.source",
@@ -119,7 +111,7 @@ return {
 					},
 					copilot = {
 						name = "copilot",
-						module = "blink-cmp-copilot",
+						module = "blink-copilot",
 						score_offset = 100,
 						async = true,
 						transform_items = function(_, items)

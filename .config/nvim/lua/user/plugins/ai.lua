@@ -14,6 +14,10 @@ local joplin_token = vim.fn.getenv("JOPLIN_TOKEN")
 if not joplin_token == "" then
 	joplin_token = "" -- or leave as nil, or handle as needed
 end
+local claude_token = vim.fn.getenv("CLAUDE_CODE_OAUTH_TOKEN")
+if not claude_token == "" then
+	claude_token = "" -- or leave as nil, or handle as needed
+end
 
 local prompts_dirs = { vim.fn.stdpath("config") .. "/prompts/", vim.env.HOME .. "/soft/Fabric/data/patterns" }
 local strategies_dirs = { vim.env.HOME .. "/soft/Fabric/data/strategies" }
@@ -83,6 +87,30 @@ function retrieve_prompts(dirs)
 	return prompt_libraries
 end
 
+local prompt_libraries = retrieve_prompts(prompts_dirs)
+
+local mcp_servers = {
+	servers = {
+		["youtube-transcript"] = {
+			cmd = {
+				"uvx",
+				"--from",
+				"git+https://github.com/jkawamoto/mcp-youtube-transcript",
+				"mcp-youtube-transcript",
+			},
+			tool_defaults = {
+				require_approval_before = true,
+			},
+		},
+		["biomcp"] = {
+			cmd = { "uv", "run", "--with", "biomcp-python", "biomcp", "run" },
+		},
+	},
+	opts = {
+		default_servers = {},
+	},
+}
+
 return {
 	{
 		"Davidyz/VectorCode",
@@ -93,116 +121,20 @@ return {
 			require("vectorcode").setup({})
 		end,
 	},
-	-- {
-	-- 	"folke/sidekick.nvim",
-	-- 	opts = {
-	-- 		-- add any options here
-	-- 		cli = {
-	-- 			mux = {
-	-- 				backend = "zellij",
-	-- 				enabled = true,
-	-- 			},
-	-- 		},
-	-- 	},
-	-- 	keys = {
-	-- 		{
-	-- 			"<tab>",
-	-- 			function()
-	-- 				-- if there is a next edit, jump to it, otherwise apply it if any
-	-- 				if not require("sidekick").nes_jump_or_apply() then
-	-- 					return "<Tab>" -- fallback to normal tab
-	-- 				end
-	-- 			end,
-	-- 			expr = true,
-	-- 			desc = "Goto/Apply Next Edit Suggestion",
-	-- 		},
-	-- 		{
-	-- 			"<c-.>",
-	-- 			function()
-	-- 				require("sidekick.cli").toggle()
-	-- 			end,
-	-- 			desc = "Sidekick Toggle",
-	-- 			mode = { "n", "t", "i", "x" },
-	-- 		},
-	-- 		{
-	-- 			"<leader>aa",
-	-- 			function()
-	-- 				require("sidekick.cli").toggle()
-	-- 			end,
-	-- 			desc = "Sidekick Toggle CLI",
-	-- 		},
-	-- 		{
-	-- 			"<leader>as",
-	-- 			function()
-	-- 				require("sidekick.cli").select()
-	-- 			end,
-	-- 			-- Or to select only installed tools:
-	-- 			-- require("sidekick.cli").select({ filter = { installed = true } })
-	-- 			desc = "Select CLI",
-	-- 		},
-	-- 		{
-	-- 			"<leader>ad",
-	-- 			function()
-	-- 				require("sidekick.cli").close()
-	-- 			end,
-	-- 			desc = "Detach a CLI Session",
-	-- 		},
-	-- 		{
-	-- 			"<leader>at",
-	-- 			function()
-	-- 				require("sidekick.cli").send({ msg = "{this}" })
-	-- 			end,
-	-- 			mode = { "x", "n" },
-	-- 			desc = "Send This",
-	-- 		},
-	-- 		{
-	-- 			"<leader>af",
-	-- 			function()
-	-- 				require("sidekick.cli").send({ msg = "{file}" })
-	-- 			end,
-	-- 			desc = "Send File",
-	-- 		},
-	-- 		{
-	-- 			"<leader>av",
-	-- 			function()
-	-- 				require("sidekick.cli").send({ msg = "{selection}" })
-	-- 			end,
-	-- 			mode = { "x" },
-	-- 			desc = "Send Visual Selection",
-	-- 		},
-	-- 		{
-	-- 			"<leader>ap",
-	-- 			function()
-	-- 				require("sidekick.cli").prompt()
-	-- 			end,
-	-- 			mode = { "n", "x" },
-	-- 			desc = "Sidekick Select Prompt",
-	-- 		},
-	-- 	},
-	-- },
 	{
 		"olimorris/codecompanion.nvim",
-		version = "v18.5.1", -- optionally pin to a tag
+		version = "v19.7.0",
 		dependencies = {
 			"nvim-lua/plenary.nvim",
 			"nvim-treesitter/nvim-treesitter",
-			{ "ravitemer/codecompanion-history.nvim", commit = "8c6ca9f998aeef89f3543343070f8562bf911fb4" },
+			{ "ravitemer/codecompanion-history.nvim", commit = "bc1b4fe06eaaf0aa2399be742e843c22f7f1652a" },
 			"cairijun/codecompanion-agentskills.nvim",
 		},
 		config = function()
 			require("codecompanion").setup({
+				mcp = mcp_servers,
 				adapters = {
 					http = {
-						codellama = function()
-							return require("codecompanion.adapters").extend("ollama", {
-								name = "codellama", -- Give this adapter a different name to differentiate it from the default ollama adapter
-								schema = {
-									model = {
-										default = "codellama:latest",
-									},
-								},
-							})
-						end,
 						qwen25coder = function()
 							return require("codecompanion.adapters").extend("ollama", {
 								name = "qwen25coder", -- Give this adapter a different name to differentiate it from the default ollama adapter
@@ -215,6 +147,13 @@ return {
 						end,
 					},
 					acp = {
+						claude_code = function()
+							return require("codecompanion.adapters").extend("claude_code", {
+								env = {
+									CLAUDE_CODE_OAUTH_TOKEN = claude_token,
+								},
+							})
+						end,
 						gemini_cli = function()
 							return require("codecompanion.adapters").extend("gemini_cli", {
 								defaults = {
@@ -228,6 +167,7 @@ return {
 						end,
 					},
 				},
+
 				extensions = {
 					history = {
 						enabled = true,
@@ -327,7 +267,7 @@ return {
 					agentskills = {
 						opts = {
 							paths = {
-								{ "~/.config/skills", recursive = true }, -- Recursive search
+								{ "~/.config/agents/skills", recursive = true }, -- Recursive search
 							},
 						},
 					},
@@ -345,18 +285,43 @@ return {
 							},
 						},
 					},
+					chat = {
+						tools = {
+							groups = {
+								["agent_youtube"] = {
+									description = "Youtube summarizer agent",
+									system_prompt = function(group, ctx)
+										return string.format(prompt_libraries["youtube_summary"].prompts[1].content)
+									end,
+									tools = {
+										"fetch",
+										"youtube_transcript__get_video_info",
+										"youtube_transcript__get_transcript",
+										"youtube_transcript__get_timed_transcript",
+									},
+									opts = {
+										collapse_tools = true,
+										ignore_system_prompt = true, -- Remove the chat's default system prompt
+										ignore_tool_system_prompt = true, -- Remove the default tool system prompt
+									},
+								},
+							},
+						},
+					},
 				},
-				prompt_library = retrieve_prompts(prompts_dirs),
+				prompt_library = prompt_libraries,
 			})
 		end,
 	},
 	{ "AndreM222/copilot-lualine" },
 	{
 		"zbirenbaum/copilot.lua",
+		dependencies = {
+			"copilotlsp-nvim/copilot-lsp",
+		},
 		cmd = "Copilot",
 		event = { "InsertEnter" },
 		build = ":Copilot auth",
-		-- dependencies = { "zbirenbaum/copilot-cmp" },
 		opts = {
 			suggestion = { enabled = false },
 			panel = { enabled = false },
@@ -364,26 +329,24 @@ return {
 			-- 	["*"] = true, -- disable for all other filetypes and ignore default `filetypes`
 			-- },
 		},
-	},
-	{
-		"zbirenbaum/copilot-cmp",
 		config = function()
-			require("copilot_cmp").setup()
+			require("copilot").setup({
+				nes = {
+					enabled = true,
+					keymap = {
+						accept_and_goto = "<leader>a",
+						accept = false,
+						dismiss = "<Esc>",
+					},
+				},
+			})
 		end,
 	},
-	-- {
-	-- 	"Exafunction/windsurf.nvim",
-	-- 	event = { "InsertEnter" },
-	-- 	opts = {
-	-- 		enable_chat = true,
-	-- 	},
-	-- 	config = function()
-	-- 		require("codeium").setup({})
-	-- 	end,
-	-- },
 	{
-		"ravitemer/mcphub.nvim",
-		commit = "7cd5db330f41b7bae02b2d6202218a061c3ebc1f",
+		"toniher/mcphub.nvim",
+		branch = "review-results-companion19",
+		-- "ravitemer/mcphub.nvim",
+		-- commit = "7cd5db330f41b7bae02b2d6202218a061c3ebc1f",
 		dependencies = {
 			"nvim-lua/plenary.nvim",
 		},

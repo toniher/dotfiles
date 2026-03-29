@@ -13,11 +13,12 @@ local servers = {
 	"ltex",
 	"nextflow_ls",
 	"perlnavigator",
-	"pyright",
+	-- "pyright",
 	"ruff",
 	"rust_analyzer",
 	"terraformls",
 	"taplo",
+  "ty",
 	"typos_lsp",
 }
 
@@ -51,6 +52,7 @@ local ensure_installed = {
 	"taplo",
 	"terraform-ls",
 	"tflint",
+  "ty",
 	"typescript-language-server",
 	"typos-lsp",
 	"vale",

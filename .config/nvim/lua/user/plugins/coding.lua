@@ -17,8 +17,11 @@ return {
 		},
 	},
 	{
+		"jeangiraldoo/codedocs.nvim",
+	},
+	{
 		"nvim-java/nvim-java",
-		version = "4.0.4", -- optionally pin to a tag
+		version = "4.1.0", -- optionally pin to a tag
 		dependencies = {
 			"williamboman/mason.nvim", -- replace with your required plugin
 		},
