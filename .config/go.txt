@@ -1,5 +1,6 @@
 github.com/jesseduffield/lazydocker@latest
-github.com/jesseduffield/lazygit@latest
-github.com/junegunn/fzf@latest
+github.com/jesseduffield/lazygit@v0.61.0
+github.com/junegunn/fzf@v0.71.0
 github.com/doronbehar/pistol/cmd/pistol@latest
--tags most github.com/xo/usql@master
+-tags most github.com/xo/usql@v0.21.4
+github.com/mozilla-ai/mcpd@v0.3.0

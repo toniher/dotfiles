@@ -63,7 +63,7 @@ if [ -d "$HOME/.local/share/fzf-tab" ]; then
   zstyle ':fzf-tab:*' switch-group '<' '>'
 fi
 
-[[ -f "$HOME/.bash-preexec.sh" ]] && source "$HOME/.bash-preexec.sh"
+# [[ -f "$HOME/.bash-preexec.sh" ]] && source "$HOME/.bash-preexec.sh"
 
 # PHP
 if command -v php &>/dev/null; then
@@ -152,3 +152,5 @@ if command -v micromamba &>/dev/null; then
   # <<< mamba initialize <<<
 fi
 
+
+if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi

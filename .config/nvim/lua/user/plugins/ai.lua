@@ -89,27 +89,27 @@ end
 
 local prompt_libraries = retrieve_prompts(prompts_dirs)
 
-local mcp_servers = {
-	servers = {
-		["youtube-transcript"] = {
-			cmd = {
-				"uvx",
-				"--from",
-				"git+https://github.com/jkawamoto/mcp-youtube-transcript",
-				"mcp-youtube-transcript",
-			},
-			tool_defaults = {
-				require_approval_before = true,
-			},
-		},
-		["biomcp"] = {
-			cmd = { "uv", "run", "--with", "biomcp-python", "biomcp", "run" },
-		},
-	},
-	opts = {
-		default_servers = {},
-	},
-}
+-- local mcp_servers = {
+-- 	servers = {
+-- 		["youtube-transcript"] = {
+-- 			cmd = {
+-- 				"uvx",
+-- 				"--from",
+-- 				"git+https://github.com/jkawamoto/mcp-youtube-transcript",
+-- 				"mcp-youtube-transcript",
+-- 			},
+-- 			tool_defaults = {
+-- 				require_approval_before = true,
+-- 			},
+-- 		},
+-- 		["biomcp"] = {
+-- 			cmd = { "uv", "run", "--with", "biomcp-python", "biomcp", "run" },
+-- 		},
+-- 	},
+-- 	opts = {
+-- 		default_servers = {},
+-- 	},
+-- }
 
 return {
 	{
@@ -123,7 +123,7 @@ return {
 	},
 	{
 		"olimorris/codecompanion.nvim",
-		version = "v19.7.0",
+		version = "v19.11.0",
 		dependencies = {
 			"nvim-lua/plenary.nvim",
 			"nvim-treesitter/nvim-treesitter",
@@ -132,7 +132,7 @@ return {
 		},
 		config = function()
 			require("codecompanion").setup({
-				mcp = mcp_servers,
+				-- mcp = mcp_servers,
 				adapters = {
 					http = {
 						qwen25coder = function()
@@ -253,14 +253,18 @@ return {
 							},
 						},
 					},
-					mcphub = {
-						callback = "mcphub.extensions.codecompanion",
-						opts = {
-							show_result_in_chat = true, -- Show the mcp tool result in the chat buffer
-							make_vars = true, -- make chat #variables from MCP server resources
-							make_slash_commands = true, -- make /slash_commands from MCP server prompts
-						},
+					mcp_companion = {
+						callback = "mcp_companion.cc",
+						opts = {},
 					},
+					-- mcphub = {
+					-- 	callback = "mcphub.extensions.codecompanion",
+					-- 	opts = {
+					-- 		show_result_in_chat = true, -- Show the mcp tool result in the chat buffer
+					-- 		make_vars = true, -- make chat #variables from MCP server resources
+					-- 		make_slash_commands = true, -- make /slash_commands from MCP server prompts
+					-- 	},
+					-- },
 					vectorcode = {
 						opts = { add_tool = true, add_slash_command = true, tool_opts = {} },
 					},
@@ -273,6 +277,23 @@ return {
 					},
 				},
 				interactions = {
+					background = {
+						chat = {
+							callbacks = {
+								["on_ready"] = {
+									actions = {
+										"interactions.background.builtin.chat_make_title",
+									},
+									-- Enable "on_ready" callback which contains the title generation action
+									enabled = true,
+								},
+							},
+							opts = {
+								-- Enable background interactions generally
+								enabled = true,
+							},
+						},
+					},
 					inline = {
 						keymaps = {
 							accept_change = {
@@ -294,10 +315,10 @@ return {
 										return string.format(prompt_libraries["youtube_summary"].prompts[1].content)
 									end,
 									tools = {
-										"fetch",
-										"youtube_transcript__get_video_info",
-										"youtube_transcript__get_transcript",
-										"youtube_transcript__get_timed_transcript",
+										"fetch_webpage",
+										"youtube-transcript_get_video_info",
+										"youtube-transcript_get_transcript",
+										"youtube-transcript_get_timed_transcript",
 									},
 									opts = {
 										collapse_tools = true,
@@ -305,6 +326,17 @@ return {
 										ignore_tool_system_prompt = true, -- Remove the default tool system prompt
 									},
 								},
+							},
+						},
+					},
+					cli = {
+						agent = "claude_code",
+						agents = {
+							claude_code = {
+								cmd = "claude",
+								args = {},
+								description = "Claude Code CLI",
+								provider = "terminal",
 							},
 						},
 					},
@@ -342,65 +374,31 @@ return {
 			})
 		end,
 	},
+
+	-- sharedserver: builds the Rust binary that manages bridge process lifecycle
 	{
-		"toniher/mcphub.nvim",
-		branch = "review-results-companion19",
-		-- "ravitemer/mcphub.nvim",
-		-- commit = "7cd5db330f41b7bae02b2d6202218a061c3ebc1f",
+		"georgeharker/sharedserver",
+		build = "cargo install --path rust",
+		lazy = false,
+	},
+
+	-- mcp-companion: the bridge + Neovim plugin
+	{
+		"georgeharker/mcp-companion",
+		lazy = false,
 		dependencies = {
 			"nvim-lua/plenary.nvim",
+			"olimorris/codecompanion.nvim",
+			"georgeharker/sharedserver",
 		},
-		cmd = "MCPHub", -- lazy load by default
-		build = "npm install -g mcp-hub@latest", -- Installs globally
+		build = "cd bridge && uv sync --frozen",
 		config = function()
-			require("mcphub").setup({
-				-- Server configuration
-				port = 37373, -- Port for MCP Hub Express API
-				config = vim.fn.expand("~/.config/mcphub/servers.json"), -- Config file path
-				global_env = function(context)
-					return {
-						CWD = context.cwd,
-						"DBUS_SESSION_BUS_ADDRESS", -- For session variables
-						GITHUB_MCP_TOKEN = github_mcp_token, -- GitHub MCP token
-						OLLAMA_API_KEY = ollama_api_key, -- Ollama API KEY
-						GEMINI_API_KEY = gemini_api_key, -- Gemini API KEY
-						JOPLIN_TOKEN = joplin_token, -- Joplin Token
-					}
-				end,
-				native_servers = {}, -- add your native servers here
-				-- Extension configurations
-				auto_approve = false,
-				extensions = {
-					avante = {},
-					codecompanion = {
-						show_result_in_chat = true, -- Show tool results in chat
-						make_vars = true, -- Create chat variables from resources
-						make_slash_commands = true, -- make /slash_commands from MCP server prompts
-					},
+			require("mcp_companion").setup({
+				bridge = {
+					port = 9741,
+					config = vim.fn.expand("~/.config/mcp/servers.json"),
 				},
-
-				-- UI configuration
-				ui = {
-					window = {
-						width = 0.8, -- Window width (0-1 ratio)
-						height = 0.8, -- Window height (0-1 ratio)
-						border = "rounded", -- Window border style
-						relative = "editor", -- Window positioning
-						zindex = 50, -- Window stack order
-					},
-				},
-
-				-- Event callbacks
-				on_ready = function(hub) end, -- Called when hub is ready
-				on_error = function(err) end, -- Called on errors
-
-				-- Logging configuration
-				log = {
-					level = vim.log.levels.WARN, -- Minimum log level
-					to_file = true, -- Enable file logging
-					file_path = nil, -- Custom log file path
-					prefix = "MCPHub", -- Log message prefix
-				},
+				log = { level = "info", notify = "error", file = true },
 			})
 		end,
 	},

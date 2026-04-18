@@ -100,7 +100,7 @@ local lint_progress = function()
 end
 
 local spaces = function()
-	return "spaces: " .. vim.api.nvim_buf_get_option(0, "shiftwidth")
+	return "spaces: " .. vim.bo.shiftwidth
 end
 
 return {
@@ -142,7 +142,7 @@ return {
 			},
 			{
 				-- Open in the current working directory
-				"<leader>cw",
+				"<leader>cy",
 				"<cmd>Yazi cwd<cr>",
 				desc = "Open the file manager in nvim's working directory",
 			},
@@ -154,7 +154,7 @@ return {
 			-- 	desc = "Resume the last yazi session",
 			-- },
 		},
-		---@type YaziConfig
+		---@type table
 		opts = {
 			-- if you want to open yazi instead of netrw, see below for more info
 			open_for_directories = true,

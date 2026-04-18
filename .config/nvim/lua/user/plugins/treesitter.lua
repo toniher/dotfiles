@@ -1,60 +1,61 @@
 return {
 	{
 		"nvim-treesitter/nvim-treesitter",
-		tag = "v0.10.0",
 		event = { "BufReadPost", "BufNewFile" },
-		-- dependencies = { "OXY2DEV/markview.nvim" },
-		config = function()
-			require("nvim-treesitter").setup() -- put your config here
-			require("nvim-treesitter.configs").setup({
-				ensure_installed = {
-					"bash",
-					"diff",
-					"dockerfile",
-					"graphql",
-					"html",
-					"http",
-					"java",
-					"javascript",
-					"json",
-					"kdl",
-					"lua",
-					"markdown",
-					"markdown_inline",
-					"perl",
-					"php",
-					"python",
-					"regex",
-					"rust",
-					"sql",
-					"typescript",
-					"xml",
-					"yaml",
-				}, -- put the language you want in this array
-				-- ensure_installed = "all", -- one of "all" or a list of languages
-				ignore_install = { "" }, -- List of parsers to ignore installing
-				sync_install = false, -- install languages synchronously (only applied to `ensure_installed`)
+		init = function()
+			local ensure_installed = {
+				"bash",
+				"diff",
+				"dockerfile",
+				"graphql",
+				"html",
+				"http",
+				"java",
+				"javascript",
+				"json",
+				"kdl",
+				"lua",
+				"markdown",
+				"markdown_inline",
+				"perl",
+				"php",
+				"python",
+				"regex",
+				"rust",
+				"sql",
+				"typescript",
+				"xml",
+				"yaml",
+			}
+			local installed = require("nvim-treesitter.config").get_installed()
+			local to_install = vim.iter(ensure_installed)
+				:filter(function(lang)
+					return not vim.tbl_contains(installed, lang)
+				end)
+				:totable()
+			require("nvim-treesitter").install(to_install)
 
-				highlight = {
-					enable = true, -- false will disable the whole extension
-					-- disable = { "css" }, -- list of language that will be disabled
-				},
-				autopairs = {
-					enable = true,
-				},
-				indent = { enable = true, disable = { "python", "css" } },
-
-				-- context_commentstring = {
-				-- 	enable = true,
-				-- 	enable_autocmd = false,
-				-- },
+			vim.api.nvim_create_autocmd('FileType', {
+				callback = function()
+					pcall(vim.treesitter.start)
+					vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+				end,
 			})
 		end,
+		opts = {
+			highlight = { enable = true },
+			indent = { enable = true, disable = { "python", "css" } },
+			autopairs = { enable = true },
+			-- context_commentstring = {
+			-- 	enable = true,
+			-- 	enable_autocmd = false,
+			-- },
+		},
 	},
 	{ "nvim-treesitter/nvim-treesitter-context", event = { "BufReadPost", "BufNewFile" } },
 	{
 		"lukas-reineke/indent-blankline.nvim",
-		tag = "v3.9.0",
+		tag = "v3.9.1",
 		event = { "BufReadPost", "BufNewFile" },
 		config = function()
 			local highlight = {
@@ -92,7 +93,15 @@ return {
 			})
 		end,
 	},
-	-- { "nvim-treesitter/nvim-treesitter-textobjects", event = { "BufReadPost", "BufNewFile" } },
-	{ "JoosepAlviste/nvim-ts-context-commentstring", event = { "BufReadPost", "BufNewFile" } },
+	-- { "nvim-treesitter/nvim-treesitter-textobjects", branch = "main", event = { "BufReadPost", "BufNewFile" } },
+{
+    "JoosepAlviste/nvim-ts-context-commentstring",
+    event = { "BufReadPost", "BufNewFile" },
+    config = function()
+      require('ts_context_commentstring').setup {
+        enable_autocmd = false,
+      }
+    end,
+  },
 	{ "https://gitlab.com/HiPhish/rainbow-delimiters.nvim", event = { "BufReadPost", "BufNewFile" } },
 }

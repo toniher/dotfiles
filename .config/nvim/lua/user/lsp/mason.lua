@@ -1,25 +1,35 @@
+local languagetool_apikey = vim.fn.getenv("LANGUAGETOOL_APIKEY")
+if not languagetool_apikey == "" then
+	languagetool_apikey = "" -- or leave as nil, or handle as needed
+end
+local languagetool_username = vim.fn.getenv("LANGUAGETOOL_USERNAME")
+if not languagetool_username == "" then
+	languagetool_username = "" -- or leave as nil, or handle as needed
+end
+local languagetool_server = vim.fn.getenv("LANGUAGETOOL_SERVER")
+if not languagetool_server == "" then
+	languagetool_server = "" -- or leave as nil, or handle as needed
+end
+
 local servers = {
 	"bashls",
-	-- "copilot",
 	"cssls",
-	"html",
-	"jsonls",
-	"ts_ls",
-	"yamlls",
 	"docker_compose_language_service",
 	"dockerls",
-	"harper_ls",
+	"html",
+	"jdtls",
+	"jsonls",
 	"lua_ls",
-	"ltex",
 	"nextflow_ls",
 	"perlnavigator",
-	-- "pyright",
 	"ruff",
 	"rust_analyzer",
-	"terraformls",
 	"taplo",
-  "ty",
+	"terraformls",
+	"ts_ls",
+	"ty",
 	"typos_lsp",
+	"yamlls",
 }
 
 local ensure_installed = {
@@ -36,7 +46,7 @@ local ensure_installed = {
 	"html-lsp",
 	"json-lsp",
 	"lua-language-server",
-	"ltex-ls",
+	"ltex-ls-plus",
 	"nextflow-language-server",
 	"perlnavigator",
 	"phpcs",
@@ -52,7 +62,7 @@ local ensure_installed = {
 	"taplo",
 	"terraform-ls",
 	"tflint",
-  "ty",
+	"ty",
 	"typescript-language-server",
 	"typos-lsp",
 	"vale",
@@ -93,6 +103,74 @@ require("mason-lspconfig").setup({
 	-- 	automatic_installation = true,
 })
 
+-- Toggle an LSP server on demand for the current buffer
+local function toggle_lsp(server)
+	local bufnr = vim.api.nvim_get_current_buf()
+	local clients = vim.lsp.get_clients({ name = server, bufnr = bufnr })
+	if #clients > 0 then
+		for _, client in ipairs(clients) do
+			client.stop(true)
+		end
+		if vim.lsp.disable then
+			vim.lsp.disable(server)
+		end
+		return
+	end
+	local opts = {
+		on_attach = require("user.lsp.handlers").on_attach,
+		capabilities = require("user.lsp.handlers").capabilities,
+	}
+	local ok, conf_opts = pcall(require, "user.lsp.settings." .. server)
+	if ok then
+		opts = vim.tbl_deep_extend("force", conf_opts, opts)
+	end
+	vim.lsp.config(server, opts)
+	vim.lsp.enable(server)
+	vim.lsp.start(vim.tbl_extend("force", opts, { name = server }), { bufnr = bufnr })
+end
+
+vim.api.nvim_create_user_command("HarperLS", function()
+	toggle_lsp("harper_ls")
+end, {})
+vim.api.nvim_create_user_command("LtexLS", function()
+	toggle_lsp("ltex_plus")
+end, {})
+
+-- Command to enable LtexLS with a specific language (e.g., :LtexLSLang ca-ES)
+local function enable_ltex_with_language(lang)
+	local bufnr = vim.api.nvim_get_current_buf()
+	local opts = {
+		on_attach = require("user.lsp.handlers").on_attach,
+		capabilities = require("user.lsp.handlers").capabilities,
+		settings = {
+			ltex = {
+				language = lang,
+				languageToolHttpServerUri = languagetool_server,
+				languageToolOrg = {
+					username = languagetool_username,
+					apiKey = languagetool_apikey,
+				},
+			},
+		},
+	}
+	-- Stop any running ltex clients for this buffer
+	for _, client in ipairs(vim.lsp.get_clients({ name = "ltex_plus", bufnr = bufnr })) do
+		client.stop(true)
+	end
+	vim.lsp.config("ltex_plus", opts)
+	vim.lsp.enable("ltex_plus")
+	vim.lsp.start(vim.tbl_extend("force", opts, { name = "ltex_plus" }), { bufnr = bufnr })
+end
+
+vim.api.nvim_create_user_command("LtexLSLang", function(params)
+	enable_ltex_with_language(params.args)
+end, {
+	nargs = 1,
+	complete = function()
+		return { "en-US", "en-GB", "es", "ca-ES", "fr", "de", "ro-RO" }
+	end,
+})
+
 require("java").setup({
 	-- load java test plugins
 	-- lombok = {
@@ -115,6 +193,14 @@ require("java").setup({
 
 local opts = {}
 
+-- Function to enable all LSP servers listed in servers
+local function enable_all_lsp_servers()
+	for _, server in ipairs(servers) do
+		local name = vim.split(server, "@")[1]
+		pcall(vim.lsp.enable, name)
+	end
+end
+
 for _, server in pairs(servers) do
 	opts = {
 		on_attach = require("user.lsp.handlers").on_attach,
@@ -129,10 +215,6 @@ for _, server in pairs(servers) do
 	end
 	vim.lsp.config(server, opts)
 end
--- Required for nvim-java below
--- TODO: Needs to be handled
-vim.lsp.config("jdtls", { autostart = false })
--- require("lspconfig").jdtls.setup({})
 
 require("mason-tool-installer").setup({
 
@@ -166,3 +248,7 @@ require("mason-tool-installer").setup({
 	-- Default: nil
 	debounce_hours = 5, -- at least 5 hours between attempts to install/update
 })
+
+return {
+	enable_all_lsp_servers = enable_all_lsp_servers,
+}

@@ -14,9 +14,11 @@ uv_tools=(
   "git+https://github.com/doobidoo/mcp-memory-service.git"
   "git+https://github.com/rudra-ravi/wikipedia-mcp.git"
   glances
-  "huggingface_hub[cli]"
+  "huggingface_hub"
 
   llm
+  "markitdown[all]"
+  mcpdoc
   nf-core
   pip
   "vectorcode[lsp,mcp]"
@@ -26,7 +28,7 @@ uv_tools=(
 
 echo "Installing/upgrading uv tools..."
 for tool in "${uv_tools[@]}"; do
-  uv tool install --upgrade "$tool"
+  uv tool install --upgrade --force "$tool"
 done
 
 # Ensure llm is installed before installing plugins

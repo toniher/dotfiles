@@ -139,3 +139,4 @@ fi
 if [ -f "$HOME/.shell_functions.sh" ]; then
   . "$HOME/.shell_functions.sh"
 fi
+

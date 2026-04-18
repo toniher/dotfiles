@@ -1,3 +1,4 @@
+ctx7
 fixjson
 forever
 @githubnext/github-copilot-cli
@@ -6,11 +7,10 @@ joplin
 jsonld-cli
 jsonlint
 jsonrepair
-httpyac
-markdownlint-cli
 mcp-hub
-@nanocollective/nanocoder
+@mozilla-ai/mcpd-proxy
 neovim
 node-lambda
 npm
 yaml-lint
+@zed-industries/claude-agent-acp

@@ -3,13 +3,8 @@ bandwhich --locked
 bat
 bob-nvim
 bottom --locked
-<<<<<<< HEAD
 cargo-binstall
 dtop
-||||||| dc616c4
-=======
-dtop
->>>>>>> 224f98b3e3948ce5b6612abb83a99b1fcb0e1f04
 du-dust
 dysk --locked
 eza
@@ -20,7 +15,6 @@ ripgrep
 git-delta
 huniq
 hyperfine --locked
-kuma-cli
 macchina
 mcat
 ouch
@@ -34,9 +28,11 @@ sd
 starship --locked
 tealdeer
 tokei
+tree-sitter-cli --locked
 tuc
 viu
 watchexec-cli --locked
+worktrunk
 xh --locked
 yazi-build --force
 zellij --locked

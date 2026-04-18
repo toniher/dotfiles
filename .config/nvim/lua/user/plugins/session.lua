@@ -2,22 +2,12 @@ return {
 	{
 		"rmagatti/auto-session",
 		lazy = false,
-		dependencies = {},
-		config = function()
-			require("auto-session").setup({
-				{
-					auto_save = true,
-					auto_create = false,
-					session_lens = {
-						load_on_setup = true,
-						previewer = false,
-						theme_conf = {
-							border = true,
-						},
-					},
-					suppressed_dirs = { "~/", "~/.config", "~/Projects", "~/Downloads", "/" },
-				},
-			})
-		end,
+		opts = {
+			session_lens = {
+				picker = "fzf",
+			},
+			suppressed_dirs = { "~/", "~/.config", "~/Projects", "~/Downloads", "/" },
+			bypass_save_filetypes = { "alpha", "dashboard", "snacks_dashboard" }, -- or whatever dashboard you use
+		},
 	},
 }

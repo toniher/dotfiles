@@ -181,16 +181,15 @@ return {
 	-- LSP plugins
 	{
 		"neovim/nvim-lspconfig",
-		tag = "v2.5.0",
 		event = { "BufReadPre", "BufNewFile" },
 	},
-	{ "williamboman/mason.nvim", tag = "v2.2.1" },
-	{ "williamboman/mason-lspconfig.nvim", tag = "v2.1.0" },
-	{ "hinell/lsp-timeout.nvim" },
+	{ "williamboman/mason.nvim", version = "*" },
+	{ "williamboman/mason-lspconfig.nvim" },
+	{ "toniher/lsp-timeout.nvim" }, -- TODO: Upgrade to upstream
 	"WhoIsSethDaniel/mason-tool-installer.nvim",
 	{
 		"j-hui/fidget.nvim",
-		tag = "legacy",
+		version = "*",
 		config = function()
 			require("fidget").setup()
 		end,
@@ -199,9 +198,9 @@ return {
 	{
 		"mfussenegger/nvim-dap",
 		event = { "BufReadPre", "BufNewFile" },
-		tag = "0.9.0",
+		tag = "0.10.0",
 		dependencies = {
-			{ "rcarriga/nvim-dap-ui", tag = "v4.0.0" },
+			{ "rcarriga/nvim-dap-ui" },
 			{ "nvim-neotest/nvim-nio", tag = "v1.10.1" },
 			{ "jay-babu/mason-nvim-dap.nvim", tag = "v2.5.2" },
 		},
@@ -236,7 +235,7 @@ return {
 			require("illuminate").configure({
 				providers = {
 					"lsp",
-					"treesitter",
+					-- "treesitter", # TODO: To recover https://github.com/RRethy/vim-illuminate/issues/247
 					"regex",
 				},
 				delay = 200,
@@ -521,8 +520,12 @@ return {
 			{ "<leader>fa", ":Seeker files<CR>", desc = "Seek Files" },
 			{ "<leader>fe", ":Seeker grep<CR>", desc = "Seek Grep" },
 			{ "<leader>fi", ":Seeker git_files<CR>", desc = "Seek Git files" },
+			{ "<leader>fw", ":Seeker grep_word<CR>", desc = "Seek Grep Word" },
 		},
-		opts = {}, -- Required unless you call seeker.setup() manually, add your configs here
+		opts = {
+			-- Toniher: Moved toggle_key for avoiding conflict with Zellij
+			toggle_key = "<C-r>",
+		}, -- Required unless you call seeker.setup() manually, add your configs here
 	},
 	{
 		"ibhagwan/fzf-lua",

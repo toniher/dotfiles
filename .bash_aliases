@@ -29,11 +29,11 @@ fi
 
 if command -v eza &>/dev/null; then
   alias exa="eza"
-  alias l="eza --icons --git -l"
-  alias la="eza --icons --git -l --all"
-  alias ll="eza --icons --git -l"
+  alias l="eza --icons --git -l -g"
+  alias la="eza --icons --git -l -g --all"
+  alias ll="eza --icons --git -l -g"
   alias ls='my_ls'
-  alias lt="eza --icons --git -l --sort modified"
+  alias lt="eza --icons --git -l -g --sort modified"
 fi
 
 if command -v fd &>/dev/null; then
@@ -58,14 +58,15 @@ if command -v pistol &>/dev/null; then
   alias fzf="fzf --header 'E to edit' --preview='pistol {}' --bind 'E:execute(nvim {})'"
 fi
 
-if command -v pixi &>/dev/null; then
+if [ -d "$HOME/.pixi" ]; then
+  export PATH=$PATH:$HOME/.pixi/bin
   eval "$(pixi completion --shell $MYSHELL)"
 fi
 
 # If procs do autocompletion
-if command -v procs &>/dev/null; then
-  source <(procs --gen-completion-out $MYSHELL)
-fi
+# if command -v procs &>/dev/null; then
+#   source <(procs --gen-completion-out $MYSHELL)
+# fi
 
 if command -v rg &>/dev/null; then
   alias grep="rg"
@@ -75,9 +76,9 @@ if command -v starship &>/dev/null; then
   eval "$(starship init $MYSHELL)"
 fi
 
-if command -v vectorcode &>/dev/null; then
-  eval "$(vectorcode -s $MYSHELL)"
-fi
+# if command -v vectorcode &>/dev/null; then
+#   eval "$(vectorcode -s $MYSHELL)"
+# fi
 
 if command -v zoxide &>/dev/null; then
   alias cd="z"

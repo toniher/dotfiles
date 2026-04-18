@@ -16,17 +16,6 @@ vim.api.nvim_create_autocmd({ "FileType" }, {
 	end,
 })
 
--- vim.cmd("autocmd BufEnter * ++nested if winnr('$') == 1 && bufname() == 'NvimTree_' . tabpagenr() | quit | endif")
-vim.api.nvim_create_autocmd("BufEnter", {
-	pattern = "*",
-	nested = true,
-	callback = function()
-		if vim.fn.winnr("$") == 1 and vim.fn.bufname() == "NvimTree_" .. vim.fn.tabpagenr() then
-			vim.cmd("quit")
-		end
-	end,
-})
-
 vim.api.nvim_create_autocmd({ "VimResized" }, {
 	callback = function()
 		vim.cmd("tabdo wincmd =")
@@ -48,19 +37,10 @@ vim.api.nvim_create_autocmd({ "TextYankPost" }, {
 vim.api.nvim_create_autocmd({ "BufWritePost" }, {
 	pattern = { "*.java" },
 	callback = function()
-		vim.lsp.codelens.refresh()
+		vim.lsp.codelens.enable(false)
+		vim.lsp.codelens.enable(true)
 	end,
 })
-
--- Disabled linting on saving --
--- vim.api.nvim_create_autocmd({ "BufWritePost" }, {
--- 	callback = function()
--- 		require("lint").try_lint()
--- 		if vim.fn.filereadable(".vale.ini") > 0 then
--- 			require("lint").try_lint({ "vale" })
--- 		end
--- 	end,
--- })
 
 vim.api.nvim_create_autocmd({ "VimEnter" }, {
 	callback = function()
@@ -83,7 +63,7 @@ vim.api.nvim_create_autocmd({ "FileType" }, {
 	pattern = { "text", "txt", "csv", "tsv" },
 	callback = function()
 		vim.opt_local.expandtab = false
-		require("cmp").setup.buffer({ enabled = false })
+		vim.b.completion = false
 	end,
 })
 
