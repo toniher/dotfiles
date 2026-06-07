@@ -11,17 +11,14 @@ fi
 uv_tools=(
   csvkit
   "git+https://github.com/54yyyu/zotero-mcp.git"
-  "git+https://github.com/doobidoo/mcp-memory-service.git"
   "git+https://github.com/rudra-ravi/wikipedia-mcp.git"
+  mcp-memory-service
   glances
   "huggingface_hub"
-
   llm
   "markitdown[all]"
-  mcpdoc
   nf-core
-  pip
-  "vectorcode[lsp,mcp]"
+  prek
   youtube_transcript_api
   "yt-dlp[default,curl-cffi]"
 )
@@ -30,6 +27,9 @@ echo "Installing/upgrading uv tools..."
 for tool in "${uv_tools[@]}"; do
   uv tool install --upgrade --force "$tool"
 done
+
+# Install vectorcode separately with extra index arguments
+uv tool install --upgrade --force vectorcode[mcp] --index https://download.pytorch.org/whl/cpu --index-strategy unsafe-best-match
 
 # Ensure llm is installed before installing plugins
 if command -v llm &>/dev/null; then

@@ -20,8 +20,10 @@ mcat
 ouch
 oxker
 pik
+prek --locked
 procs
 ripgrep --features pcre2
+--git https://github.com/rtk-ai/rtk
 rust-parallel
 rustnet-monitor
 sd
