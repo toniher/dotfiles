@@ -7,7 +7,7 @@ return {
 			"mfussenegger/nvim-dap-python", --optional
 		},
 		branch = "main",
-		lazy = false,
+		cmd = "VenvSelect",
 		keys = {
 			{ ",v", "<cmd>VenvSelect<cr>" },
 		},
@@ -21,9 +21,26 @@ return {
 	{
 		"nvim-java/nvim-java",
 		version = "4.1.0", -- optionally pin to a tag
+		ft = "java",
 		dependencies = {
-			"williamboman/mason.nvim", -- replace with your required plugin
+			"williamboman/mason.nvim",
+			"neovim/nvim-lspconfig",
 		},
+		config = function()
+			require("java").setup({})
+
+			local handlers = require("user.lsp.handlers")
+			local opts = {
+				on_attach = handlers.on_attach,
+				capabilities = handlers.capabilities,
+			}
+			local ok, conf_opts = pcall(require, "user.lsp.settings.jdtls")
+			if ok then
+				opts = vim.tbl_deep_extend("force", conf_opts, opts)
+			end
+			vim.lsp.config("jdtls", opts)
+			vim.lsp.enable("jdtls")
+		end,
 	},
 	{
 		"esmuellert/codediff.nvim",
@@ -47,9 +64,7 @@ return {
 	},
 	{
 		"folke/todo-comments.nvim",
-		config = function()
-			require("todo-comments").setup()
-		end,
+		opts = {},
 		dependencies = "nvim-lua/plenary.nvim",
 	},
 	{
@@ -100,11 +115,7 @@ return {
 		"kylechui/nvim-surround",
 		version = "^3.1.8", -- Use for stability; omit to use `main` branch for the latest features
 		event = "VeryLazy",
-		config = function()
-			require("nvim-surround").setup({
-				-- Configuration here, or leave empty to use defaults
-			})
-		end,
+		opts = {},
 	},
 	{
 		"folke/flash.nvim",

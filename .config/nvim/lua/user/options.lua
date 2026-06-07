@@ -1,14 +1,12 @@
-vim.g.SHELL = "/bin/zsh" -- the shell to use for neovim
-
 -- Illuminate disable in certain places
  -- vim.g.Illuminate_ftblacklist = { "alpha", "NvimTree" }
 -- disable netrw at the very start of your init.lua
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
--- vim.g.skip_ts_context_commentstring_module = true
+vim.g.skip_ts_context_commentstring_module = true
 -- python
-vim.g.python3_host_prog = "$HOME/.pyenv/versions/neovim/bin/python"
+vim.g.python3_host_prog = vim.env.HOME .. "/.pyenv/versions/neovim/bin/python"
 
 -- project nvim # TODO: to remove
 vim.g.project_lsp_nowarn = 1

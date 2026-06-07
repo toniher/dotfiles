@@ -1,22 +1,10 @@
 local M = {}
 
--- local status_cmp_ok, cmp_nvim_lsp = pcall(require, "cmp_nvim_lsp")
--- if not status_cmp_ok then
--- 	return
--- end
---
 local status_blink_ok, blink_lsp = pcall(require, "blink.cmp")
-if not status_blink_ok then
-	return
-end
 
 M.capabilities = vim.lsp.protocol.make_client_capabilities()
 M.capabilities.textDocument.completion.completionItem.snippetSupport = true
--- if status_cmp_ok then
--- 	M.capabilities = cmp_nvim_lsp.default_capabilities(M.capabilities)
--- end
---
--- blink
+
 if status_blink_ok then
 	M.get_capabilities = function()
 		local capabilities = vim.lsp.protocol.make_client_capabilities()
@@ -42,7 +30,7 @@ M.setup = function()
 				[vim.diagnostic.severity.INFO]  = "",
 			},
 		},
-		update_in_insert = true,
+		update_in_insert = false,
 		underline = true,
 		severity_sort = true,
 		float = {

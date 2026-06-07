@@ -1,10 +1,8 @@
 vim.api.nvim_create_autocmd({ "FileType" }, {
 	pattern = { "qf", "help", "man", "lspinfo", "spectre_panel" },
-	callback = function()
-		vim.cmd([[
-      nnoremap <silent> <buffer> q :close<CR>
-      set nobuflisted
-    ]])
+	callback = function(args)
+		vim.keymap.set("n", "q", "<cmd>close<CR>", { buffer = args.buf, silent = true })
+		vim.bo[args.buf].buflisted = false
 	end,
 })
 
@@ -30,23 +28,22 @@ vim.api.nvim_create_autocmd({ "CmdWinEnter" }, {
 
 vim.api.nvim_create_autocmd({ "TextYankPost" }, {
 	callback = function()
-		vim.highlight.on_yank({ higroup = "Visual", timeout = 200 })
+		vim.hl.on_yank({ higroup = "Visual", timeout = 200 })
 	end,
 })
 
 vim.api.nvim_create_autocmd({ "BufWritePost" }, {
 	pattern = { "*.java" },
-	callback = function()
-		vim.lsp.codelens.enable(false)
-		vim.lsp.codelens.enable(true)
+	callback = function(args)
+		vim.lsp.codelens.refresh({ bufnr = args.buf })
 	end,
 })
 
-vim.api.nvim_create_autocmd({ "VimEnter" }, {
-	callback = function()
-		vim.cmd("hi link illuminatedWord LspReferenceText")
-	end,
-})
+local function link_illuminated()
+	vim.cmd("hi! link illuminatedWord LspReferenceText")
+end
+vim.api.nvim_create_autocmd({ "ColorScheme" }, { callback = link_illuminated })
+link_illuminated()
 
 vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
 	callback = function()

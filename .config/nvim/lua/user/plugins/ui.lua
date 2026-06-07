@@ -104,6 +104,107 @@ local spaces = function()
 end
 
 return {
+	"folke/tokyonight.nvim",
+	{
+		"brenoprata10/nvim-highlight-colors",
+		config = function()
+			require("nvim-highlight-colors").setup({})
+		end,
+	},
+	{
+		"folke/which-key.nvim",
+		event = "VeryLazy",
+		dependencies = {
+			"echasnovski/mini.icons",
+		},
+		opts = {},
+	},
+	{
+		"rcarriga/nvim-notify",
+		lazy = false,
+		-- config = true,
+		config = function()
+			require("notify").setup({ level = vim.log.levels.DEBUG })
+		end,
+	},
+	{
+		"folke/noice.nvim",
+		event = "VeryLazy",
+		dependencies = {
+			"MunifTanjim/nui.nvim",
+		},
+		config = function()
+			require("noice").setup({
+				lsp = {
+					-- override markdown rendering so that **cmp** and other plugins use **Treesitter**
+					override = {
+						["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+						["vim.lsp.util.stylize_markdown"] = true,
+						["cmp.entry.get_documentation"] = true,
+					},
+				},
+				-- you can enable a preset for easier configuration
+				presets = {
+					bottom_search = true, -- use a classic bottom cmdline for search
+					command_palette = true, -- position the cmdline and popupmenu together
+					long_message_to_split = true, -- long messages will be sent to a split
+					inc_rename = false, -- enables an input dialog for inc-rename.nvim
+					lsp_doc_border = false, -- add a border to hover docs and signature help
+				},
+			})
+		end,
+	},
+	{
+		"MeanderingProgrammer/render-markdown.nvim",
+		config = function()
+			require("render-markdown").setup({
+				completions = { blink = { enabled = true } },
+			})
+		end,
+	},
+	{
+		"saxon1964/neovim-tips",
+		version = "*", -- Only update on tagged releases
+		dependencies = {
+			"MunifTanjim/nui.nvim",
+			"MeanderingProgrammer/render-markdown.nvim",
+		},
+		opts = {
+			-- OPTIONAL: Location of user defined tips (default value shown below)
+			user_file = vim.fn.stdpath("config") .. "/neovim_tips/user_tips.md",
+			-- OPTIONAL: Prefix for user tips to avoid conflicts (default: "[User] ")
+			user_tip_prefix = "[User] ",
+			-- OPTIONAL: Show warnings when user tips conflict with builtin (default: true)
+			warn_on_conflicts = true,
+			-- OPTIONAL: Daily tip mode (default: 1)
+			-- 0 = off, 1 = once per day, 2 = every startup
+			daily_tip = 0,
+		},
+		init = function()
+			-- OPTIONAL: Change to your liking or drop completely
+			-- The plugin does not provide default key mappings, only commands
+			local map = vim.keymap.set
+			map("n", "<leader>nto", ":NeovimTips<CR>", { desc = "Neovim tips", noremap = true, silent = true })
+			map(
+				"n",
+				"<leader>nte",
+				":NeovimTipsEdit<CR>",
+				{ desc = "Edit your Neovim tips", noremap = true, silent = true }
+			)
+			map(
+				"n",
+				"<leader>nta",
+				":NeovimTipsAdd<CR>",
+				{ desc = "Add your Neovim tip", noremap = true, silent = true }
+			)
+			map(
+				"n",
+				"<leader>ntr",
+				":NeovimTipsRandom<CR>",
+				{ desc = "Show random tip", noremap = true, silent = true }
+			)
+		end,
+	},
 	{
 		"amrbashir/nvim-docs-view",
 		event = "LspAttach",
@@ -117,9 +218,7 @@ return {
 		"hedyhli/outline.nvim",
 		event = "VeryLazy",
 		cmd = { "Outline", "OutlineOpen" },
-		config = function()
-			require("outline").setup({})
-		end,
+		opts = {},
 	},
 	{
 		"Wansmer/symbol-usage.nvim",
@@ -276,14 +375,6 @@ return {
 				},
 			})
 		end,
-	},
-	{
-		"wizardling1/zj-tab.nvim",
-		opts = {
-			-- Example options:
-			enable_devicons = true,
-			max_tabname_width = 30,
-		},
 	},
 	{
 		"nvim-lualine/lualine.nvim",

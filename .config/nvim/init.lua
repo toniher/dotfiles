@@ -9,11 +9,10 @@ local colorscheme = "tokyonight-night"
 
 local status_ok, _ = pcall(vim.cmd, "colorscheme " .. colorscheme)
 if not status_ok then
-	return
+	vim.notify("colorscheme " .. colorscheme .. " not found", vim.log.levels.WARN)
 end
 
 require("user.autocommands")
-require("user.lsp")
 require("user.dap")
 
 -- Other vim stuff

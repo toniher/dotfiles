@@ -1,15 +1,14 @@
-local languagetool_apikey = vim.fn.getenv("LANGUAGETOOL_APIKEY")
-if not languagetool_apikey == "" then
-	languagetool_apikey = "" -- or leave as nil, or handle as needed
+local function env_or_empty(name)
+	local v = vim.fn.getenv(name)
+	if v == vim.NIL or v == nil then
+		return ""
+	end
+	return v
 end
-local languagetool_username = vim.fn.getenv("LANGUAGETOOL_USERNAME")
-if not languagetool_username == "" then
-	languagetool_username = "" -- or leave as nil, or handle as needed
-end
-local languagetool_server = vim.fn.getenv("LANGUAGETOOL_SERVER")
-if not languagetool_server == "" then
-	languagetool_server = "" -- or leave as nil, or handle as needed
-end
+
+local languagetool_apikey = env_or_empty("LANGUAGETOOL_APIKEY")
+local languagetool_username = env_or_empty("LANGUAGETOOL_USERNAME")
+local languagetool_server = env_or_empty("LANGUAGETOOL_SERVER")
 
 local servers = {
 	"bashls",
@@ -17,7 +16,6 @@ local servers = {
 	"docker_compose_language_service",
 	"dockerls",
 	"html",
-	"jdtls",
 	"jsonls",
 	"lua_ls",
 	"nextflow_ls",
@@ -169,26 +167,6 @@ end, {
 	complete = function()
 		return { "en-US", "en-GB", "es", "ca-ES", "fr", "de", "ro-RO" }
 	end,
-})
-
-require("java").setup({
-	-- load java test plugins
-	-- lombok = {
-	-- 	enable = false,
-	-- 	version = "1.18.40",
-	-- },
-	-- jdtls = {
-	-- 	version = "v1.43.0",
-	-- },
-	-- java_test = {
-	-- 	enable = true,
-	-- 	version = "0.43.1",
-	-- },
-	--
-	-- spring_boot_tools = {
-	-- 	enable = true,
-	-- 	version = "1.59.0",
-	-- },
 })
 
 local opts = {}

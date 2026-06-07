@@ -49,6 +49,7 @@ return {
 				lua = { "stylua" },
 				markdown = { "prettierd" },
 				nextflow = { "nextflow" },
+				nginx = { "nginxfmt" },
 				php = { "php_cs_fixer" },
 				python = { "ruff_organize_imports", "ruff_format" },
 				rust = { "rustfmt" },

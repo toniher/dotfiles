@@ -33,7 +33,7 @@ function make_prompt_library(name, system_prompt, user_prompt, is_code)
 	is_code = is_code == nil and true or is_code
 	return {
 		interaction = "chat",
-		description = name,
+		description = system_prompt,
 		opts = vim.tbl_extend("force", { alias = name }, shared_opts),
 
 		prompts = {
@@ -62,7 +62,7 @@ end
 
 function user_content(prefix)
 	return function(context)
-		local text = require("codecompanion.helpers.actions").get_code(context.start_line, context.end_line)
+		local text = require("codecompanion.helpers.code").get_code(context.start_line, context.end_line)
 		return prefix .. "\n\n```" .. context.filetype .. "\n" .. text .. "\n```\n\n"
 	end
 end
@@ -89,28 +89,6 @@ end
 
 local prompt_libraries = retrieve_prompts(prompts_dirs)
 
--- local mcp_servers = {
--- 	servers = {
--- 		["youtube-transcript"] = {
--- 			cmd = {
--- 				"uvx",
--- 				"--from",
--- 				"git+https://github.com/jkawamoto/mcp-youtube-transcript",
--- 				"mcp-youtube-transcript",
--- 			},
--- 			tool_defaults = {
--- 				require_approval_before = true,
--- 			},
--- 		},
--- 		["biomcp"] = {
--- 			cmd = { "uv", "run", "--with", "biomcp-python", "biomcp", "run" },
--- 		},
--- 	},
--- 	opts = {
--- 		default_servers = {},
--- 	},
--- }
-
 return {
 	{
 		"Davidyz/VectorCode",
@@ -123,7 +101,7 @@ return {
 	},
 	{
 		"olimorris/codecompanion.nvim",
-		version = "v19.11.0",
+		version = "v19.14.0",
 		dependencies = {
 			"nvim-lua/plenary.nvim",
 			"nvim-treesitter/nvim-treesitter",
@@ -135,12 +113,12 @@ return {
 				-- mcp = mcp_servers,
 				adapters = {
 					http = {
-						qwen25coder = function()
+						gemma4 = function()
 							return require("codecompanion.adapters").extend("ollama", {
-								name = "qwen25coder", -- Give this adapter a different name to differentiate it from the default ollama adapter
+								name = "gemma4", -- Give this adapter a different name to differentiate it from the default ollama adapter
 								schema = {
 									model = {
-										default = "qwen2.5-coder:latest",
+										default = "gemma4:31b-cloud",
 									},
 								},
 							})
@@ -153,6 +131,50 @@ return {
 									CLAUDE_CODE_OAUTH_TOKEN = claude_token,
 								},
 							})
+						end,
+						deep_agents = function()
+							local helpers = require("codecompanion.adapters.acp.helpers")
+							return {
+								name = "deep_agents",
+								formatted_name = "DeepAgents",
+								type = "acp",
+								roles = {
+									llm = "assistant",
+									user = "user",
+								},
+								commands = {
+									default = {
+										"deepagents",
+										"--acp",
+									},
+								},
+								defaults = {
+									mcpServers = {},
+									timeout = 20000, -- 20 seconds
+								},
+								parameters = {
+									protocolVersion = 1,
+									clientCapabilities = {
+										fs = { readTextFile = true, writeTextFile = true },
+									},
+									clientInfo = {
+										name = "CodeCompanion.nvim",
+										version = "1.0.0",
+									},
+								},
+								handlers = {
+									setup = function(self)
+										return true
+									end,
+									auth = function(self)
+										return true
+									end,
+									form_messages = function(self, messages, capabilities)
+										return helpers.form_messages(self, messages, capabilities)
+									end,
+									on_exit = function(self, code) end,
+								},
+							}
 						end,
 						gemini_cli = function()
 							return require("codecompanion.adapters").extend("gemini_cli", {
@@ -167,7 +189,15 @@ return {
 						end,
 					},
 				},
-
+				display = {
+					action_palette = {
+						provider = "fzf_lua",
+						opts = {
+							show_default_actions = true,
+							show_default_prompt_library = true,
+						},
+					},
+				},
 				extensions = {
 					history = {
 						enabled = true,
@@ -272,6 +302,8 @@ return {
 						opts = {
 							paths = {
 								{ "~/.config/agents/skills", recursive = true }, -- Recursive search
+								{ ".claude/skills", recursive = true }, -- Recursive search
+								{ ".agents/skills", recursive = true }, -- Recursive search
 							},
 						},
 					},
@@ -388,7 +420,6 @@ return {
 		lazy = false,
 		dependencies = {
 			"nvim-lua/plenary.nvim",
-			"olimorris/codecompanion.nvim",
 			"georgeharker/sharedserver",
 		},
 		build = "cd bridge && uv sync --frozen",
