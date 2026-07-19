@@ -1,26 +1,19 @@
-local github_mcp_token = vim.fn.getenv("GITHUB_MCP_TOKEN")
-if not github_mcp_token == "" then
-	github_mcp_token = "" -- or leave as nil, or handle as needed
-end
-local gemini_api_key = vim.fn.getenv("GEMINI_API_KEY")
-if not gemini_api_key == "" then
-	gemini_api_key = "" -- or leave as nil, or handle as needed
-end
-local ollama_api_key = vim.fn.getenv("OLLAMA_API_KEY")
-if not ollama_api_key == "" then
-	ollama_api_key = "" -- or leave as nil, or handle as needed
-end
-local joplin_token = vim.fn.getenv("JOPLIN_TOKEN")
-if not joplin_token == "" then
-	joplin_token = "" -- or leave as nil, or handle as needed
-end
-local claude_token = vim.fn.getenv("CLAUDE_CODE_OAUTH_TOKEN")
-if not claude_token == "" then
-	claude_token = "" -- or leave as nil, or handle as needed
+local function get_env(var)
+	local val = vim.fn.getenv(var)
+	return (val == vim.NIL or val == "") and nil or val
 end
 
-local prompts_dirs = { vim.fn.stdpath("config") .. "/prompts/", vim.env.HOME .. "/soft/Fabric/data/patterns" }
-local strategies_dirs = { vim.env.HOME .. "/soft/Fabric/data/strategies" }
+local tokens = {
+	github_mcp = get_env("GITHUB_MCP_TOKEN"),
+	gemini = get_env("GEMINI_API_KEY"),
+	ollama = get_env("OLLAMA_API_KEY"),
+	openrouter = get_env("OPENROUTER_API_KEY"),
+	joplin = get_env("JOPLIN_TOKEN"),
+	claude = get_env("CLAUDE_CODE_OAUTH_TOKEN"),
+}
+
+local prompts_dirs = { vim.fn.stdpath("config") .. "/prompts/", vim.fn.expand("~/soft/Fabric/data/patterns") }
+local strategies_dirs = { vim.fn.expand("~/soft/Fabric/data/strategies") }
 local shared_opts = {
 	modes = { "v", "n" },
 	auto_submit = false,
@@ -91,21 +84,12 @@ local prompt_libraries = retrieve_prompts(prompts_dirs)
 
 return {
 	{
-		"Davidyz/VectorCode",
-		version = "*", -- optional, depending on whether you're on nightly or release
-		dependencies = { "nvim-lua/plenary.nvim" },
-		cmd = "VectorCode", -- if you're lazy-loading VectorCode
-		config = function()
-			require("vectorcode").setup({})
-		end,
-	},
-	{
 		"olimorris/codecompanion.nvim",
-		version = "v19.14.0",
+		version = "v19.20.0",
 		dependencies = {
 			"nvim-lua/plenary.nvim",
 			"nvim-treesitter/nvim-treesitter",
-			{ "ravitemer/codecompanion-history.nvim", commit = "bc1b4fe06eaaf0aa2399be742e843c22f7f1652a" },
+			{ "toniher/codecompanion-history.nvim" },
 			"cairijun/codecompanion-agentskills.nvim",
 		},
 		config = function()
@@ -113,6 +97,7 @@ return {
 				-- mcp = mcp_servers,
 				adapters = {
 					http = {
+						opts = { show_presets = false },
 						gemma4 = function()
 							return require("codecompanion.adapters").extend("ollama", {
 								name = "gemma4", -- Give this adapter a different name to differentiate it from the default ollama adapter
@@ -123,14 +108,33 @@ return {
 								},
 							})
 						end,
+						ollama = function()
+							return require("codecompanion.adapters").extend("ollama", {
+								name = "ollama",
+								schema = {
+									model = {
+										default = "gemma3:4b-cloud",
+									},
+								},
+							})
+						end,
+						openrouter = function()
+							return require("codecompanion.adapters").extend("openrouter", {
+								opts = { session_id = "title_generation" },
+							})
+						end,
 					},
 					acp = {
+						opts = { show_presets = false },
 						claude_code = function()
 							return require("codecompanion.adapters").extend("claude_code", {
 								env = {
 									CLAUDE_CODE_OAUTH_TOKEN = claude_token,
 								},
 							})
+						end,
+						copilot_acp = function()
+							return require("codecompanion.adapters").extend("copilot_acp", {})
 						end,
 						deep_agents = function()
 							local helpers = require("codecompanion.adapters.acp.helpers")
@@ -144,7 +148,7 @@ return {
 								},
 								commands = {
 									default = {
-										"deepagents",
+										"deepagents-code",
 										"--acp",
 									},
 								},
@@ -175,17 +179,6 @@ return {
 									on_exit = function(self, code) end,
 								},
 							}
-						end,
-						gemini_cli = function()
-							return require("codecompanion.adapters").extend("gemini_cli", {
-								defaults = {
-									auth_method = "oauth-personal", -- "oauth-personal"|"gemini-api-key"|"vertex-ai"
-									timeout = 20000, -- 20 seconds
-								},
-								env = {
-									GEMINI_API_KEY = gemini_api_key,
-								},
-							})
 						end,
 					},
 				},
@@ -224,9 +217,9 @@ return {
 							auto_generate_title = true,
 							title_generation_opts = {
 								---Adapter for generating titles (defaults to current chat adapter)
-								adapter = nil, -- "copilot"
+								adapter = "ollama", -- "copilot"
 								---Model for generating titles (defaults to current chat model)
-								model = nil, -- "gpt-4o"
+								model = "gemma3:4b-cloud",
 								---Number of user prompts after which to refresh the title (0 to disable)
 								refresh_every_n_prompts = 0, -- e.g., 3 to refresh after every 3rd user prompt
 								---Maximum number of times to refresh the title (default: 3)
@@ -254,8 +247,8 @@ return {
 								browse_summaries_keymap = "gbs",
 
 								generation_opts = {
-									adapter = nil, -- defaults to current chat adapter
-									model = nil, -- defaults to current chat model
+									adapter = "ollama", -- defaults to current chat adapter
+									model = "gemma3:4b-cloud", -- defaults to current chat model
 									context_size = 90000, -- max tokens that the model supports
 									include_references = true, -- include slash command content
 									include_tool_outputs = true, -- include tool execution results
@@ -263,40 +256,11 @@ return {
 									format_summary = nil, -- custom function to format generated summary e.g to remove <think/> tags from summary
 								},
 							},
-
-							-- Memory system (requires VectorCode CLI)
-							memory = {
-								-- Automatically index summaries when they are generated
-								auto_create_memories_on_summary_generation = true,
-								-- Path to the VectorCode executable
-								vectorcode_exe = "vectorcode",
-								-- Tool configuration
-								tool_opts = {
-									-- Default number of memories to retrieve
-									default_num = 10,
-								},
-								-- Enable notifications for indexing progress
-								notify = true,
-								-- Index all existing memories on startup
-								-- (requires VectorCode 0.6.12+ for efficient incremental indexing)
-								index_on_startup = false,
-							},
 						},
 					},
 					mcp_companion = {
 						callback = "mcp_companion.cc",
 						opts = {},
-					},
-					-- mcphub = {
-					-- 	callback = "mcphub.extensions.codecompanion",
-					-- 	opts = {
-					-- 		show_result_in_chat = true, -- Show the mcp tool result in the chat buffer
-					-- 		make_vars = true, -- make chat #variables from MCP server resources
-					-- 		make_slash_commands = true, -- make /slash_commands from MCP server prompts
-					-- 	},
-					-- },
-					vectorcode = {
-						opts = { add_tool = true, add_slash_command = true, tool_opts = {} },
 					},
 					agentskills = {
 						opts = {
@@ -339,6 +303,7 @@ return {
 						},
 					},
 					chat = {
+						-- adapter = { name = "copilot", model = "gpt-5-mini" },
 						tools = {
 							groups = {
 								["agent_youtube"] = {
@@ -414,22 +379,22 @@ return {
 		lazy = false,
 	},
 
-	-- mcp-companion: the bridge + Neovim plugin
+	-- mcp-companion: the combiner + Neovim plugin
 	{
 		"georgeharker/mcp-companion",
 		lazy = false,
 		dependencies = {
-			"nvim-lua/plenary.nvim",
+			"olimorris/codecompanion.nvim",
 			"georgeharker/sharedserver",
 		},
-		build = "cd bridge && uv sync --frozen",
+		build = "cd combiner && uv sync --frozen",
 		config = function()
 			require("mcp_companion").setup({
-				bridge = {
+				combiner = {
 					port = 9741,
 					config = vim.fn.expand("~/.config/mcp/servers.json"),
 				},
-				log = { level = "info", notify = "error", file = true },
+				log = { level = "info", notify = "error" },
 			})
 		end,
 	},

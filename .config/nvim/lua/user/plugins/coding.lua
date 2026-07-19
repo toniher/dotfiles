@@ -20,7 +20,7 @@ return {
 	},
 	{
 		"nvim-java/nvim-java",
-		version = "4.1.0", -- optionally pin to a tag
+		version = "4.1.2", -- optionally pin to a tag
 		ft = "java",
 		dependencies = {
 			"williamboman/mason.nvim",
@@ -133,7 +133,7 @@ return {
 	},
 	{
 		"allaman/emoji.nvim",
-		version = "6.0.1", -- optionally pin to a tag
+		version = "6.1.0", -- optionally pin to a tag
 		ft = "markdown", -- adjust to your needs
 		dependencies = {
 			-- optional for nvim-cmp integration
@@ -145,27 +145,6 @@ return {
 		opts = {
 			-- default is false
 			enable_cmp_integration = true,
-		},
-	},
-	{
-		"uhs-robert/sshfs.nvim",
-		opts = {
-			-- Refer to the configuration section below
-			-- or leave empty for defaults
-			--
-			keymaps = {
-				mount = "<leader>sm", -- creates an ssh connection and mounts via sshfs
-				unmount = "<leader>su", -- disconnects an ssh connection and unmounts via sshfs
-				unmount_all = "<leader>sU", -- disconnects all ssh connections and unmounts via sshfs
-				explore = "<leader>se", -- explore an sshfs mount using your native editor
-				change_dir = "<leader>sd", -- change dir to mount
-				command = "<leader>sn", -- run command on mount
-				config = "<leader>sc", -- edit ssh config
-				reload = "<leader>sr", -- manually reload ssh config
-				files = "<leader>sf", -- browse files using chosen picker
-				grep = "<leader>sg", -- grep files using chosen picker
-				terminal = "<leader>st", -- open ssh terminal session
-			},
 		},
 	},
 }
