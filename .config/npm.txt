@@ -5,6 +5,7 @@ ctx7
 fixjson
 forever
 @github/copilot
+hunkdiff
 joplin
 jsonld-cli
 jsonlint

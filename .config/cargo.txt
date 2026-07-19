@@ -2,7 +2,7 @@ atuin
 bandwhich --locked
 bat
 bob-nvim
-bottom --locked
+bottom --locked --bin btm
 cargo-binstall
 dtop
 du-dust

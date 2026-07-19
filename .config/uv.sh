@@ -28,9 +28,6 @@ for tool in "${uv_tools[@]}"; do
   uv tool install --upgrade --force "$tool"
 done
 
-# Install vectorcode separately with extra index arguments
-uv tool install --upgrade --force vectorcode[mcp] --index https://download.pytorch.org/whl/cpu --index-strategy unsafe-best-match
-
 # Ensure llm is installed before installing plugins
 if command -v llm &>/dev/null; then
   llm_plugins=(
