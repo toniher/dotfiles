@@ -85,7 +85,7 @@ local prompt_libraries = retrieve_prompts(prompts_dirs)
 return {
 	{
 		"olimorris/codecompanion.nvim",
-		version = "v19.20.0",
+		version = "v19.22.0",
 		dependencies = {
 			"nvim-lua/plenary.nvim",
 			"nvim-treesitter/nvim-treesitter",
@@ -113,7 +113,7 @@ return {
 								name = "ollama",
 								schema = {
 									model = {
-										default = "gemma3:4b-cloud",
+										default = "gemma4:cloud",
 									},
 								},
 							})
@@ -148,7 +148,7 @@ return {
 								},
 								commands = {
 									default = {
-										"deepagents-code",
+										"dcode",
 										"--acp",
 									},
 								},
@@ -180,6 +180,9 @@ return {
 								},
 							}
 						end,
+						opencode = function()
+							return require("codecompanion.adapters").extend("opencode", {})
+						end,
 					},
 				},
 				display = {
@@ -202,7 +205,7 @@ return {
 							-- Save all chats by default (disable to save only manually using 'sc')
 							auto_save = true,
 							-- Number of days after which chats are automatically deleted (0 to disable)
-							expiration_days = 0,
+							expiration_days = 90,
 							-- Picker interface (auto resolved to a valid picker)
 							picker = "snacks", --- ("telescope", "snacks", "fzf-lua", or "default")
 							---Optional filter function to control which chats are shown when browsing
@@ -212,6 +215,7 @@ return {
 								rename = { n = "r", i = "<M-r>" },
 								delete = { n = "d", i = "<M-d>" },
 								duplicate = { n = "<C-y>", i = "<C-y>" },
+								save_to_file = { n = "e", i = "<M-e>" },
 							},
 							---Automatically generate titles for new chats
 							auto_generate_title = true,
@@ -219,7 +223,7 @@ return {
 								---Adapter for generating titles (defaults to current chat adapter)
 								adapter = "ollama", -- "copilot"
 								---Model for generating titles (defaults to current chat model)
-								model = "gemma3:4b-cloud",
+								model = "gemma4:cloud",
 								---Number of user prompts after which to refresh the title (0 to disable)
 								refresh_every_n_prompts = 0, -- e.g., 3 to refresh after every 3rd user prompt
 								---Maximum number of times to refresh the title (default: 3)
@@ -242,18 +246,59 @@ return {
 							-- Summary system
 							summary = {
 								-- Keymap to generate summary for current chat (default: "gcs")
-								create_summary_keymap = "gcs",
+								create_summary_keymap = "gm",
 								-- Keymap to browse summaries (default: "gbs")
 								browse_summaries_keymap = "gbs",
 
 								generation_opts = {
 									adapter = "ollama", -- defaults to current chat adapter
-									model = "gemma3:4b-cloud", -- defaults to current chat model
+									model = "gemma4:cloud", -- defaults to current chat model
 									context_size = 90000, -- max tokens that the model supports
 									include_references = true, -- include slash command content
 									include_tool_outputs = true, -- include tool execution results
 									system_prompt = nil, -- custom system prompt (string or function)
 									format_summary = nil, -- custom function to format generated summary e.g to remove <think/> tags from summary
+								},
+							},
+							-- Memory system (requires VectorCode CLI or claude-mem)
+							memory = {
+								-- Which backend to use: "vectorcode", "claude-mem", or nil to auto-resolve
+								-- (auto-resolve prefers vectorcode, then claude-mem, whichever is available)
+								provider = "claude-mem",
+								-- Automatically index/save summaries when they are generated
+								auto_create_memories_on_summary_generation = true,
+								-- Path to the VectorCode executable
+								vectorcode_exe = "vectorcode",
+								-- Tool configuration
+								tool_opts = {
+									-- Default number of memories to retrieve
+									default_num = 10,
+								},
+								-- Enable notifications for indexing progress
+								notify = true,
+								-- Index all existing memories on startup
+								-- (requires VectorCode 0.6.12+ for efficient incremental indexing)
+								index_on_startup = true,
+								-- Options specific to the claude-mem backend
+								claude_mem = {
+									host = nil, -- default: "127.0.0.1" (or $CLAUDE_MEM_WORKER_HOST / settings.json)
+									port = nil, -- default: 37700 (or $CLAUDE_MEM_WORKER_PORT / settings.json)
+									data_dir = nil, -- default: "~/.claude-mem" (or $CLAUDE_MEM_DATA_DIR)
+									timeout_ms = 5000,
+									-- Override how a project_root maps to a claude-mem project key
+									-- (default: vim.fs.basename(project_root))
+									project = nil,
+									search = "keyword", -- "keyword" | "semantic" (semantic requires Chroma enabled in claude-mem)
+									-- Inject claude-mem's recent context into every new chat (opt-in)
+									inject_context_on_new_chat = true,
+									inject_limit = 5,
+									-- Try to start the claude-mem worker if it isn't reachable (opt-in).
+									-- Looks for a global `claude-mem` binary on PATH first, then falls
+									-- back to the newest claude-mem plugin installed under the Claude
+									-- Code plugin cache. Safe to enable: starting an already-running
+									-- worker is a no-op.
+									auto_start_worker = true,
+									auto_start_timeout_ms = 15000,
 								},
 							},
 						},
